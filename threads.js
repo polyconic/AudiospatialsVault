@@ -208,7 +208,19 @@ const Thread = (() => {
             del.type = "button";
             del.addEventListener("click", async () => {
               if (!confirm("Delete this comment? Replies to it stay.")) return;
-              try { await VaultDB.remove(node.id); } catch (e) { alert(e.message); }
+              try {
+                /* A false return means the server would not accept it — the
+                   token this browser holds did not write this comment. The
+                   delete link is drawn from a list kept client-side, so it
+                   can be wrong (or forged); the server is the real check.
+                   Saying nothing here leaves a dead button. */
+                if (!(await VaultDB.remove(node.id))) {
+                  alert("That comment could not be deleted. It was written " +
+                        "from a different browser, or it is already gone.");
+                }
+              } catch (e) {
+                alert(e.message);
+              }
               refresh();
             });
             acts.append(del);

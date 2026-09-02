@@ -20,5 +20,5 @@
 
 const CONFIG = {
   supabaseUrl:     "https://dvdngzwhbxckeuledski.supabase.co",
-  supabaseAnonKey: "",
+  supabaseAnonKey: "sb_publishable_n3dQwvw0XNv12ZFEMsV8hQ_iAdxDuYy",
 };
