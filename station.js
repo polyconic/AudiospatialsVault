@@ -32,44 +32,14 @@ const STATION = {
      "abandoned"         — kept for the record, not coming back
    ------------------------------------------------------------------ */
 const LIBRARY = {
-  metaphysics: {
-    slug:"metaphysics", title:"METAPHYSICS", artist:"Gregor Egan",
-    status:"work in progress", file:"audio/metaphysics.m4a", duration:316.07,
-    note:"Third pass. The break at 3:40 still does not land.",
-  },
-  ethereal: {
-    slug:"ethereal", title:"ETHEREAL", artist:"Gregor Egan",
-    status:"work in progress", file:"audio/ethereal.m4a", duration:134.12,
-    note:"Too short. Wants another sixteen bars somewhere.",
-  },
-  noforest: {
-    slug:"noforest", title:"NO FOREST", artist:"Gregor Egan",
-    status:"unreleased", file:"audio/noforest.m4a", duration:314.05,
+  mediummaster01: {
+    slug:"mediummaster01", title:"MEDIUM MASTER 01", artist:"Gregor Egan",
+    status:"work in progress", file:"audio/mediummaster01.m4a", duration:340.00,
     note:"",
   },
-  wavorian: {
-    slug:"wavorian", title:"WAVORIAN", artist:"Gregor Egan",
-    status:"work in progress", file:"audio/wavorian.m4a", duration:133.12,
-    note:"Mix is bottom-heavy on speakers, fine on headphones.",
-  },
-  theevening: {
-    slug:"theevening", title:"THE EVENING", artist:"Gregor Egan",
-    status:"unreleased", file:"audio/theevening.m4a", duration:105.07,
-    note:"",
-  },
-  interstellar: {
-    slug:"interstellar", title:"INTERSTELLAR!", artist:"Gregor Egan",
-    status:"abandoned", file:"audio/interstellar.m4a", duration:236.05,
-    note:"Kept for the record. Went nowhere twice.",
-  },
-  byansel: {
-    slug:"byansel", title:"BY ANSEL", artist:"Gregor Egan",
-    status:"work in progress", file:"audio/byansel.m4a", duration:102.10,
-    note:"Sketch. Barely an arrangement yet.",
-  },
-  futuresequoia: {
-    slug:"futuresequoia", title:"FUTURE SEQUOIA", artist:"Gregor Egan",
-    status:"unreleased", file:"audio/futuresequoia.m4a", duration:112.11,
+  quarry2001master1: {
+    slug:"quarry2001master1", title:"QUARRY 2001 MASTER 1", artist:"Gregor Egan",
+    status:"unreleased", file:"audio/quarry2001master1.m4a", duration:326.00,
     note:"",
   },
 };
@@ -145,7 +115,7 @@ const SCHEDULE = [
     note:  "unfinished work, for those still awake",
     mode:  "playlist",
     visual:"spectrum",
-    items: [LIBRARY.metaphysics, LIBRARY.wavorian, LIBRARY.byansel],
+    items: [LIBRARY.mediummaster01, LIBRARY.quarry2001master1],
   },
   {
     start: 7,
@@ -169,7 +139,7 @@ const SCHEDULE = [
     note:  "",
     mode:  "playlist",
     visual:"drift",
-    items: [LIBRARY.ethereal, LIBRARY.noforest, LIBRARY.futuresequoia],
+    items: [LIBRARY.quarry2001master1, LIBRARY.mediummaster01],
   },
   {
     start: 17,
@@ -177,7 +147,7 @@ const SCHEDULE = [
     note:  "",
     mode:  "playlist",
     visual:"horizon",
-    items: [LIBRARY.theevening, LIBRARY.interstellar],
+    items: [LIBRARY.mediummaster01, LIBRARY.quarry2001master1],
   },
   {
     start: 21,
@@ -185,6 +155,6 @@ const SCHEDULE = [
     note:  "louder as it gets later",
     mode:  "playlist",
     visual:"spectrum",
-    items: [LIBRARY.metaphysics, LIBRARY.interstellar, LIBRARY.wavorian],
+    items: [LIBRARY.quarry2001master1, LIBRARY.mediummaster01],
   },
 ];
