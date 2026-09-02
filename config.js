@@ -19,6 +19,6 @@
    ================================================================== */
 
 const CONFIG = {
-  supabaseUrl:     "",
+  supabaseUrl:     "https://dvdngzwhbxckeuledski.supabase.co",
   supabaseAnonKey: "",
 };
