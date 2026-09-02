@@ -52,6 +52,13 @@ create policy comments_read on public.comments for select using (true);
 
 revoke insert, update, delete on public.comments from anon, authenticated;
 
+-- Granted explicitly rather than relying on the project's "automatically
+-- expose new tables" setting, which should be OFF: with it on, every table
+-- added later is reachable from the public anon key by default, and the one
+-- you forget about is the one that matters. This schema says exactly what it
+-- exposes, and nothing else in the database is reachable.
+grant select on public.comments to anon, authenticated;
+
 
 -- ---------- posting -------------------------------------------------
 -- security definer so it can write to a table the caller cannot.
