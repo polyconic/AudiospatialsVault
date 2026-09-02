@@ -1,4 +1,4 @@
-# Audiopatials Vault — conventions
+# Audiospatials Vault — conventions
 
 Read this before editing. Read `README.md` too; it explains what the site is.
 

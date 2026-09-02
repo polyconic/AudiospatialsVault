@@ -1,5 +1,5 @@
 -- ===================================================================
--- AUDIOPATIALS VAULT — discourse schema
+-- AUDIOSPATIALS VAULT — discourse schema
 --
 -- Run this once in the Supabase SQL editor (Dashboard → SQL Editor →
 -- New query → paste → Run). It is safe to re-run.

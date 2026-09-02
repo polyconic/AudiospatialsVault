@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Audiopatials Vault</title>
+<title>Audiospatials Vault</title>
 <link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="vault.css">
 <meta name="description" content="Unreleased and in-progress work, and what people make of it.">
@@ -15,7 +15,7 @@
 
   <header class="mast">
     <span class="ember"></span>
-    <a href="index.html">AUDIOPATIALS VAULT</a>
+    <a href="index.html">AUDIOSPATIALS VAULT</a>
     <span class="sp"></span>
     <nav>
       <a href="index.html">stream</a>
@@ -60,7 +60,7 @@
   };
 
   if (!piece) {
-    document.title = "Not in the vault — Audiopatials Vault";
+    document.title = "Not in the vault — Audiospatials Vault";
     mount.append(el("h1", "ptitle", "Not in the vault"));
     mount.append(el("p", "pnote",
       slug ? "Nothing here is called “" + slug + "”."
@@ -73,7 +73,7 @@
     return;
   }
 
-  document.title = piece.title + " — Audiopatials Vault";
+  document.title = piece.title + " — Audiospatials Vault";
 
   mount.append(el("div", "kicker", piece.kind === "audio" ? "sound" : "image"));
   mount.append(el("h1", "ptitle", piece.title));

@@ -21,8 +21,8 @@ const VaultDB = (() => {
      what you wrote — there is deliberately no recovery path, because
      any recovery path would be an account.
      ------------------------------------------------------------------ */
-  const TOKEN_KEY  = "apv.token";
-  const HANDLE_KEY = "apv.handle";
+  const TOKEN_KEY  = "asv.token";
+  const HANDLE_KEY = "asv.handle";
 
   function token() {
     let t = null;
@@ -47,7 +47,7 @@ const VaultDB = (() => {
      can appear on your own comments without the server ever having to
      say which rows belong to whom — that answer would let anyone map
      a thread back to its authors. */
-  const MINE_KEY = "apv.mine";
+  const MINE_KEY = "asv.mine";
   function mine() {
     try { return new Set(JSON.parse(localStorage.getItem(MINE_KEY) || "[]")); }
     catch (e) { return new Set(); }
@@ -59,7 +59,7 @@ const VaultDB = (() => {
 
 
   /* ---------- local backing ------------------------------------------ */
-  const LOCAL_KEY = "apv.local.comments";
+  const LOCAL_KEY = "asv.local.comments";
 
   const local = {
     mode: "local",

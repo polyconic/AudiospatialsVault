@@ -1,4 +1,4 @@
-# Audiopatials Vault
+# Audiospatials Vault
 
 Unreleased and in-progress work, on a stream, with an argument under each piece.
 

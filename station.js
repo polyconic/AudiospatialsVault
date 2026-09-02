@@ -12,8 +12,8 @@
    ================================================================== */
 
 const STATION = {
-  name:  "AUDIOPATIALS VAULT",
-  title: "Audiopatials Vault",
+  name:  "AUDIOSPATIALS VAULT",
+  title: "Audiospatials Vault",
 
   tzOffset: 0,
 
