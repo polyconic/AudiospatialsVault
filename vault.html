@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The vault — Audiopatials Vault</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="vault.css">
+<meta name="description" content="Everything in the vault: unreleased and in-progress sound and image, each with its own thread.">
+</head>
+<body>
+
+<div class="wrap wide">
+
+  <header class="mast">
+    <span class="ember"></span>
+    <a href="index.html">AUDIOPATIALS VAULT</a>
+    <span class="sp"></span>
+    <nav>
+      <a href="index.html">stream</a>
+      <a href="vault.html">vault</a>
+    </nav>
+  </header>
+
+  <div class="kicker">the collection</div>
+  <p class="pnote" style="margin-bottom:6px">
+    Work that is not finished and work that was never put out. Every piece
+    has a thread. If something says <em>work in progress</em>, the thread is
+    the point — say what is working before you say what is not.
+  </p>
+
+  <div id="sound"></div>
+  <div id="image"></div>
+
+  <footer class="foot">
+    <a href="index.html">back to the stream</a>
+    <span id="mode"></span>
+  </footer>
+
+</div>
+
+<script src="config.js"></script>
+<script>
+  if (CONFIG.supabaseUrl && CONFIG.supabaseAnonKey) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"><\/script>');
+  }
+</script>
+<script src="station.js"></script>
+<script src="clock.js"></script>
+<script src="db.js"></script>
+<script>
+(async () => {
+  const el = (t, c, x) => {
+    const n = document.createElement(t);
+    if (c) n.className = c;
+    if (x != null) n.textContent = x;
+    return n;
+  };
+
+  /* Counts are fetched once for the whole index rather than per card —
+     one request for the page instead of one request per piece. */
+  let counts = {};
+  try { counts = await VaultDB.counts(); } catch (e) { console.warn(e); }
+
+  const onAirAudio = Clock.audioOnAir();
+  const onAirArt   = Clock.artOnAir();
+
+  function section(host, label, pieces) {
+    const head = el("div", "secthead");
+    head.append(el("span", null, label));
+    head.append(el("span", null, pieces.length + " pieces"));
+    host.append(head);
+
+    const grid = el("div", "grid");
+    for (const p of pieces) {
+      const card = el("a", "card");
+      card.href = "piece.html?p=" + encodeURIComponent(p.slug);
+
+      if (p.kind === "art") {
+        const img = el("img", "cthumb");
+        img.src = p.file; img.alt = ""; img.loading = "lazy";
+        card.append(img);
+      }
+
+      card.append(el("div", "ctitle", p.title));
+      card.append(el("div", "cby", p.artist));
+      if (p.note) card.append(el("div", "cnote", p.note));
+
+      const foot = el("div", "cfoot");
+      foot.append(el("span", null, p.status));
+
+      const live = (p.kind === "audio" ? onAirAudio : onAirArt);
+      if (live && live.slug === p.slug) foot.append(el("span", "conair", "on air"));
+
+      const n = counts[p.slug] || 0;
+      foot.append(el("span", "cn" + (n ? "" : " zero"),
+                     n === 1 ? "1 comment" : n + " comments"));
+      card.append(foot);
+      grid.append(card);
+    }
+    host.append(grid);
+  }
+
+  const all   = Object.values(PIECES);
+  const sound = all.filter(p => p.kind === "audio");
+  const image = all.filter(p => p.kind === "art");
+
+  section(document.getElementById("sound"), "sound", sound);
+  section(document.getElementById("image"), "image", image);
+
+  document.getElementById("mode").textContent =
+    VaultDB.mode === "local" ? "local mode — threads are only in this browser" : "";
+})();
+</script>
+</body>
+</html>
