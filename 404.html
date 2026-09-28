@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Nothing here &mdash; Audiospatials Vault</title>
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="/css/base.css">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { display: grid; align-items: end; justify-items: center; }
+        canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+        .mid { position: relative; z-index: 3; text-align: center; padding: 20px 20px clamp(40px, 11vh, 90px); }
+        .mid p { margin-bottom: 26px; line-height: 2; }
+        .mid a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--rule);
+                 padding-bottom: 2px; margin: 0 10px; transition: color 0.2s, border-color 0.2s; }
+        .mid a:hover { color: var(--sig); border-color: var(--sig); }
+    </style>
+</head>
+<body>
+<div class="corner">
+<a class="mailmark" href="mailto:hello@audiospatials.com?subject=Vault" aria-label="Email">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5H4L12 11.6 20 5H22V19H2Z"/></svg>
+</a>
+</div>
+<a class="backmark" href="/" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12 12 4.5V10H21V14H12V19.5Z"/></svg></a>
+<a class="homemark" href="/" aria-label="Front page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 11.5H19V21H13.8V15H10.2V21H5V11.5H2Z"/></svg></a>
+<canvas id="c"></canvas>
+<div class="mid">
+    <p class="label">There is no page at this address.<br>The pieces know it too.</p>
+    <p class="label"><a href="/">Vault</a><a href="/pieces">Pieces</a><a href="https://audiospatials.com/">Audiospatials</a></p>
+    <p class="copy label">&copy; 2026 Audiospatials</p>
+</div>
+
+<script src="/js/geo.js"></script>
+<script>
+Geo.converge(document.getElementById('c'), '404', width => {
+    const s = Math.min(innerWidth * 0.62 / width, innerHeight * 0.4);
+    return { x: (innerWidth - width * s) / 2, y: innerHeight * 0.41 - s / 2, s };
+}, { cycle: 16 });
+</script>
+<script src="/js/nav.js"></script>
+</body>
+</html>

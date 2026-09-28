@@ -1,0 +1,203 @@
+:root {
+  --bg: #0a0a0a;
+  --fg: #f2f2ef;
+  --dim: #787874;
+  --faint: #2e2e2b;
+  --rule: #1c1c1a;
+  --sig: #ff2d00;
+  --panel: rgba(10, 10, 10, 0.62);
+  --veil: rgba(10, 10, 10, 0.985);
+  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Pages fade through each other: the old one leaves first, then the new one
+   arrives, so two layouts never sit on top of each other mid-fade. Browsers
+   without cross-document view transitions just navigate as before. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) {
+    animation: vs-out 0.2s cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  ::view-transition-new(root) {
+    animation: vs-in 0.34s cubic-bezier(0, 0, 0.2, 1) 0.12s both;
+  }
+}
+@keyframes vs-out { to { opacity: 0; } }
+@keyframes vs-in { from { opacity: 0; } }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  min-height: 100%;
+  /* Headings assemble from pieces that start off to the right. */
+  overflow-x: clip;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: var(--sig); color: #000; }
+
+a { color: inherit; }
+
+:focus-visible { outline: 2px solid var(--sig); outline-offset: 3px; }
+
+.label {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.rule { border: 0; border-top: 1px solid var(--rule); }
+
+/* Headings drawn in the geometric alphabet (geo.js). The SVG is one cap
+   height tall; the real text stays alongside for readers and search. */
+.geo { display: block; height: 0.72em; width: auto; overflow: visible; }
+/* The seam stroke is in screen pixels whatever the drawing's scale. */
+.geo path { fill: currentColor; stroke: currentColor; stroke-width: 0.7px; vector-effect: non-scaling-stroke; }
+.arrive { display: inline-block; white-space: pre; }
+/* The alphabet's arrow set inline with ordinary type: cap height, on the baseline. */
+.geo.arrow { display: inline-block; height: 0.72em; width: 0.36em; margin-left: 0.1em; vertical-align: baseline; }
+.geo-text {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* Site-wide back-of-house bar. Every room has one so no room is a dead end. */
+.exit {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 22px;
+  align-items: center;
+  /* Solid, with a hairline on top: the old fade let work scroll visibly
+     behind the bar, which on a phone (two lines tall) read as floating. */
+  padding: 12px 20px;
+  /* Down past the home indicator on phones (needs viewport-fit=cover). */
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+/* Solid ground below the bar too. While Safari's toolbar slides in and out,
+   the bar and the screen's bottom edge part for a moment; this keeps the page
+   from showing through that gap. */
+.exit::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 100vh;
+  background: var(--bg);
+}
+.exit a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
+.exit a:hover { color: var(--fg); }
+.exit .here { color: var(--sig); }
+.exit .copy { color: var(--dim); }
+.exit .spacer { flex: 1; }
+@media (max-width: 560px) { .exit .spacer { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Corner marks: back and home. Both are flat shapes like the alphabet. */
+.backmark, .homemark {
+  position: fixed;
+  top: 13px;
+  z-index: 210;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  mix-blend-mode: difference;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.backmark { left: max(15px, env(safe-area-inset-left, 0px)); }
+.homemark { left: calc(max(15px, env(safe-area-inset-left, 0px)) + 38px); }
+
+.backmark svg, .homemark svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+.backmark:hover, .backmark:focus-visible,
+.homemark:hover, .homemark:focus-visible {
+  mix-blend-mode: normal;
+  color: var(--sig);
+  transform: scale(1.14);
+}
+
+.homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+
+
+/* Top right: mail. */
+.corner {
+  position: fixed;
+  top: 13px;
+  right: max(15px, env(safe-area-inset-right, 0px));
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.corner a, .corner button {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  mix-blend-mode: difference;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.corner svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+.corner a:hover, .corner a:focus-visible,
+.corner button:hover, .corner button:focus-visible {
+  mix-blend-mode: normal;
+  color: var(--sig);
+  transform: scale(1.14);
+}
+
+.corner { transition: opacity 0.3s ease; }
+
+.copy { color: var(--dim); }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Pieces &mdash; Audiospatials Vault</title>
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <meta name="description" content="Everything in the Audiospatials Vault: unreleased and in-progress work.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <link rel="stylesheet" href="/css/vault.css">
+</head>
+<body>
+<div class="corner">
+<a class="mailmark" href="mailto:hello@audiospatials.com?subject=Vault" aria-label="Email">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5H4L12 11.6 20 5H22V19H2Z"/></svg>
+</a>
+</div>
+<a class="backmark" href="/" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12 12 4.5V10H21V14H12V19.5Z"/></svg></a>
+<a class="homemark" href="/" aria-label="Front page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 11.5H19V21H13.8V15H10.2V21H5V11.5H2Z"/></svg></a>
+<div class="wrap">
+    <h1 data-arrive>Pieces<em>.</em></h1>
+
+    <p class="lede">Unreleased and unfinished work from Audiospatials. Everything the stream plays.</p>
+
+    <section>
+        <div class="tracks">
+<!-- build:pieces -->
+            <div class="track" data-file="/audio/mediummaster01.m4a" data-duration="340"><button type="button" class="track-play" aria-label="Play MEDIUM MASTER 01"><i></i></button><div class="track-name"><a class="track-title" href="/medium">MEDIUM MASTER 01</a><span class="track-sub label">Gregor Egan · <span class="status">work in progress</span> <span class="onair" data-onair="medium" hidden>On air</span></span></div><span class="track-time label">0:00 / 5:40</span><div class="track-bar" aria-hidden="true"><span></span></div></div>
+            <div class="track" data-file="/audio/quarry2001master1.m4a" data-duration="326"><button type="button" class="track-play" aria-label="Play QUARRY 2001 MASTER 1"><i></i></button><div class="track-name"><a class="track-title" href="/quarry-2001">QUARRY 2001 MASTER 1</a><span class="track-sub label">Gregor Egan · <span class="status">unreleased</span> <span class="onair" data-onair="quarry-2001" hidden>On air</span></span></div><span class="track-time label">0:00 / 5:26</span><div class="track-bar" aria-hidden="true"><span></span></div></div>
+<!-- /build:pieces -->
+        </div>
+    </section>
+</div>
+
+<nav class="exit">
+    <a href="/">Vault</a>
+    <span class="here">Pieces</span><a href="https://audiospatials.com/">Audiospatials</a>
+    <span class="spacer"></span>
+    <span class="copy">&copy; 2026 Audiospatials</span>
+</nav>
+<script>
+if (location.pathname.endsWith('.html')) history.replaceState(history.state, '', '/pieces' + location.search + location.hash);
+</script>
+<script src="/content/pieces.js"></script>
+<script src="/js/geo.js"></script>
+<script src="/js/vault.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/menu.js"></script>
+</body>
+</html>

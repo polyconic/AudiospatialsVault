@@ -1,684 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Audiospatials Vault</title>
-<link rel="icon" href="favicon.png">
-<meta name="description" content="Unreleased and in-progress sound and image, on a stream, each piece open for discussion.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Audiospatials Vault</title>
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <meta name="description" content="Unreleased and unfinished work from Audiospatials, streaming around the clock.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <link rel="stylesheet" href="/css/vault.css">
+    <style>
+        html, body { height: 100%; width: 100%; overflow: hidden; }
+        body { background: var(--bg); position: relative; }
 
-<!-- Link previews. og:image must be an absolute URL — every platform
-     ignores a relative path here, and the filename is case-sensitive
-     once it's served from GitHub Pages. Set SITE_ORIGIN below to the
-     real domain before this goes anywhere public; until then previews
-     will simply have no image, which is harmless. -->
-<meta property="og:type"        content="website">
-<meta property="og:url"         content="/">
-<meta property="og:title"       content="Audiospatials Vault">
-<meta property="og:description" content="Unreleased and in-progress sound and image, on a stream, each piece open for discussion.">
-<meta property="og:site_name"   content="Audiospatials Vault">
-<meta name="twitter:card"        content="summary_large_image">
-<meta name="twitter:title"       content="Audiospatials Vault">
-<meta name="twitter:description" content="Unreleased and in-progress sound and image, on a stream, each piece open for discussion.">
+        /* The wordmark, drawn by geo.js over the link's own text, which stays
+           as the hit area and for readers. It leads to the list. Five letters
+           against the main sites' thirteen, so it's set larger to carry the same weight. */
+        .mark {
+            position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%);
+            font-family: var(--sans); font-size: clamp(24px, 12vw, 280px); font-weight: 700;
+            letter-spacing: 0.25em; text-transform: uppercase; white-space: nowrap;
+            color: transparent; text-decoration: none; padding: 0.4em 0; z-index: 10; user-select: none;
+        }
+        .geo { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 9; pointer-events: none; }
+        .kicker { position: absolute; left: 0; right: 0; text-align: center; z-index: 10; }
 
-<style>
-  :root{
-    --bg:#0f0f0f;
-    --ink:#f0f0f0;
-    /* dim/dimmer/quiet used to be three different greys for a text
-       hierarchy — that read as "some text is grey, some is white."
-       All three now equal --ink: every label on the page is the same
-       white. --hair is a structural line colour, not text, untouched. */
-    --dim:#f0f0f0;
-    --dimmer:#f0f0f0;
-    --hair:#2b2b2b;
-    --quiet:#f0f0f0;
-    --live:#e02b1d;              /* the on-air lamp — the only colour here */
-    --font:'Helvetica Neue', Helvetica, Arial, sans-serif;
-  }
+        /* The stream, under the word. */
+        .stream { position: absolute; left: 50%; bottom: max(clamp(28px, 8vh, 80px), env(safe-area-inset-bottom));
+                  transform: translateX(-50%); width: min(560px, calc(100% - 40px)); z-index: 10; }
+        .stream > .label { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+        .stream .tracks { max-width: none; margin-bottom: 0; }
+        .stream nav { margin-top: 18px; display: flex; justify-content: center; gap: 22px; }
+        .stream nav a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
+        .stream nav a:hover, .stream nav a:focus-visible { color: var(--fg); }
 
-  *{box-sizing:border-box;margin:0;padding:0;}
-  /* In-app browsers (Instagram, Facebook) auto-inflate text, which
-     renders it larger than the CSS asked for — the JS title fit then
-     measures one size and the browser draws another, and long words
-     spill off the edge. Pin it to exactly what's specified. */
-  html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
-  html,body{height:100%;}
-
-  body{
-    background:var(--bg); color:var(--ink);
-    /* 700 (Bold) — 500 wasn't enough. This font has no true Semibold on
-       this system (checked: weight 600 and 700 render at an identical
-       width, both heavier than 500), so there's no middle ground between
-       Medium and full Bold — went with Bold. #title pins its own 300
-       below, so the big display type keeps its lighter look. */
-    font-family:var(--font); font-weight:700;
-    overflow:hidden; -webkit-font-smoothing:antialiased;
-    user-select:none; -webkit-user-select:none;
-  }
-
-  /* ---------- backdrop layers ---------- */
-  /* two layers so one clip can fade up while the other fades out —
-     swapping src on a single element flashes black on every change */
-  .bg{
-    position:fixed; inset:0; width:100%; height:100%;
-    object-fit:cover; z-index:0;
-    opacity:0; transition:opacity 2.6s ease;
-    filter:grayscale(1) contrast(1.15) brightness(.34);
-    pointer-events:none;
-  }
-  .bg.on{opacity:.46;}
-
-  .hearth{
-    position:fixed; inset:0; z-index:1; pointer-events:none;
-    background:
-      radial-gradient(62vw 62vw at 20% 64%, rgba(240,240,240,.05), transparent 68%),
-      radial-gradient(50vw 50vw at 80% 28%, rgba(240,240,240,.03), transparent 70%);
-  }
-
-  /* footage varies wildly in brightness; this protects the HUD at top
-     and bottom without flattening the picture in the middle */
-  .scrim{
-    position:fixed; inset:0; z-index:1; pointer-events:none;
-    background:linear-gradient(to bottom,
-      rgba(15,15,15,.92) 0%, rgba(15,15,15,.55) 14%, rgba(15,15,15,0) 30%,
-      rgba(15,15,15,0) 62%, rgba(15,15,15,.62) 84%, rgba(15,15,15,.93) 100%);
-  }
-
-  #viz{position:fixed; inset:0; width:100%; height:100%; z-index:2;}
-
-  /* Both of these sit BELOW the text layer (stage, z-index 3). They used
-     to be above it, which meant the vignette's dark edges washed over the
-     header text and the grain's overlay blend mottled every label — the
-     type looked faded at the corners rather than solid white. */
-  .vignette{
-    position:fixed; inset:0; pointer-events:none; z-index:2;
-    background:radial-gradient(ellipse at 50% 46%,
-      rgba(0,0,0,0) 30%, rgba(0,0,0,.5) 78%, rgba(0,0,0,.8) 100%);
-  }
-
-  .grain{
-    position:fixed; inset:-40%; pointer-events:none; z-index:2;
-    opacity:.10; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation:drift 11s ease-in-out infinite alternate;
-  }
-  @keyframes drift{from{transform:translate(0,0)} to{transform:translate(1.5%,-1.5%)}}
-
-  /* ---------- layout ---------- */
-  .stage{
-    position:fixed; inset:0; z-index:3;
-    display:grid; grid-template-rows:auto 1fr auto;
-    /* safe-area on all four sides — in landscape a notch eats into the
-       left or right edge, which is where the clock and day counter sit */
-    padding:clamp(20px,3.6vw,46px);
-    padding-top:calc(clamp(20px,3.6vw,46px) + env(safe-area-inset-top));
-    padding-bottom:calc(clamp(20px,3.6vw,46px) + env(safe-area-inset-bottom));
-    padding-left:calc(clamp(20px,3.6vw,46px) + env(safe-area-inset-left));
-    padding-right:calc(clamp(20px,3.6vw,46px) + env(safe-area-inset-right));
-    transition:opacity .5s, filter .5s;
-  }
-  body.sched-open .stage{opacity:0; pointer-events:none;}
-
-  /* ---------- header ---------- */
-  header{
-    display:flex; justify-content:space-between; align-items:flex-start; gap:24px;
-    font-size:clamp(10px,1.05vw,11px);
-    letter-spacing:.2em; text-transform:uppercase;
-    color:var(--dim);
-  }
-  .onair{display:flex; align-items:center; gap:10px; color:var(--ink);}
-  .ember{
-    width:7px; height:7px; border-radius:50%; background:var(--live);
-    box-shadow:0 0 10px var(--live), 0 0 22px rgba(224,43,29,.55);
-    animation:breathe 4.6s ease-in-out infinite;
-  }
-  @keyframes breathe{
-    0%,100%{opacity:1; box-shadow:0 0 10px var(--live), 0 0 22px rgba(224,43,29,.55);}
-    50%    {opacity:.5; box-shadow:0 0 6px var(--live),  0 0 12px rgba(224,43,29,.3);}
-  }
-  header .right{text-align:right; line-height:2; font-variant-numeric:tabular-nums;}
-  #clock{color:var(--ink);}
-
-  /* ---------- centre ---------- */
-  .centre{
-    display:flex; flex-direction:column; justify-content:center;
-    align-items:flex-start; gap:clamp(8px,1.3vw,14px);
-    padding-bottom:clamp(90px,24vh,260px);
-  }
-
-  .block{
-    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
-    font-size:clamp(10px,1.05vw,12px);
-    letter-spacing:.26em; text-transform:uppercase; color:var(--ink);
-  }
-  .block .note{
-    font-style:italic; text-transform:none; letter-spacing:.04em;
-    color:var(--quiet); font-size:clamp(11px,1.15vw,13px);
-  }
-
-  #title{
-    font-size:clamp(50px,13.5vw,200px);
-    font-weight:300; line-height:.9; letter-spacing:-.025em;
-    text-wrap:balance;
-    text-shadow:0 0 70px rgba(240,240,240,.14);
-    /* last-resort net: if the JS fit is ever wrong — a substituted font,
-       an in-app browser rendering at a size we didn't measure — break the
-       word instead of letting it run off the screen. Should not normally
-       trigger, since the fit shrinks the type first. */
-    overflow-wrap:anywhere;
-  }
-
-  .meta{
-    display:flex; gap:clamp(12px,2.2vw,26px); flex-wrap:wrap; align-items:baseline;
-    font-size:clamp(10px,1.02vw,11px);
-    letter-spacing:.24em; text-transform:uppercase; color:var(--dim);
-  }
-  .meta b{font-weight:400; color:var(--ink); font-variant-numeric:tabular-nums;}
-  .meta .sep{color:var(--dimmer);}
-  #by{color:var(--ink); letter-spacing:.22em;}
-  #by:empty{display:none;}
-
-  /* ---------- footer ---------- */
-  footer{display:flex; flex-direction:column; gap:13px;}
-
-  .blockline{
-    display:flex; align-items:center; gap:14px;
-    font-size:clamp(9px,.98vw,11px);
-    letter-spacing:.2em; text-transform:uppercase; color:var(--dimmer);
-  }
-  .blockbar{position:relative; flex:1; height:1px; background:var(--hair);}
-  .blockbar i{position:absolute; inset:0 auto 0 0; background:var(--dimmer); width:0%;}
-
-  .bar{position:relative; height:1px; width:100%; background:var(--hair);}
-  .bar i{
-    position:absolute; inset:0 auto 0 0; width:0%;
-    background:linear-gradient(90deg, rgba(240,240,240,.22), var(--ink));
-  }
-  .bar i::after{
-    content:''; position:absolute; right:-2px; top:-2px;
-    width:5px; height:5px; border-radius:50%; background:var(--ink);
-    box-shadow:0 0 10px rgba(240,240,240,.85);
-  }
-
-  .times{
-    display:flex; justify-content:space-between;
-    font-size:clamp(10px,1.05vw,12px); letter-spacing:.14em; color:var(--dim);
-    font-variant-numeric:tabular-nums; text-transform:uppercase;
-  }
-
-  .queue{
-    display:flex; justify-content:space-between; gap:22px;
-    font-size:clamp(9px,1vw,11px);
-    letter-spacing:.2em; text-transform:uppercase; color:var(--dim);
-  }
-  #schedToggle, #tracklistToggle, #fullToggle, #vaultLink{
-    color:var(--quiet); cursor:pointer; text-decoration:none; letter-spacing:.2em;
-    border-bottom:1px solid transparent; padding-bottom:2px;
-    transition:color .4s, border-color .4s;
-  }
-  #schedToggle:hover, #tracklistToggle:hover, #fullToggle:hover, #vaultLink:hover{
-    color:var(--ink); border-color:var(--dimmer);
-  }
-  /* hidden until JS confirms the browser actually supports it — iOS
-     Safari has no Fullscreen API for non-video elements */
-  #fullToggle, #fullSep{display:none;}
-
-  /* ---------- schedule ---------- */
-  .schedwrap{
-    position:fixed; inset:0; z-index:9;
-    /* scrolls once the track lists are expanded — margin:auto on the
-       inner keeps it centred when short without clipping when tall */
-    display:flex; overflow-y:auto; overscroll-behavior:contain;
-    background:rgba(15,15,15,.93);
-    opacity:0; visibility:hidden; transition:opacity .5s, visibility .5s;
-    cursor:pointer;
-  }
-  body.sched-open .schedwrap{opacity:1; visibility:visible;}
-
-  .schedinner{width:min(680px,88vw); margin:auto; padding:6vh 0;}
-
-  /* Touch only. On desktop there's a visible scrim to click and an
-     Escape key, so this is just clutter — but on a phone or tablet the
-     panel fills the screen and neither of those exists, leaving no way
-     back out. Fixed, so it stays put while the track list scrolls. */
-  .schedback{
-    display:none;                /* turned on only by the query below */
-    position:fixed; z-index:11;
-    top:clamp(12px,2.5vw,26px); left:clamp(12px,2.5vw,26px);
-    align-items:center; gap:9px;
-    /* padding gives a 44px-plus touch target without changing how it looks */
-    padding:15px 16px; margin:-15px -16px;
-    background:none; border:0; cursor:pointer;
-    font-family:var(--font); font-weight:700;
-    font-size:clamp(9.5px,1vw,11px);
-    line-height:1;
-    letter-spacing:.2em; text-transform:uppercase; color:var(--ink);
-    transition:opacity .3s;
-  }
-  @media (max-width:600px), (hover:none){
-    .schedback{display:flex;}
-  }
-  .schedback:hover{opacity:.6;}
-  /* the arrow glyph sits lower in its em box than cap-height text, so
-     matching line-heights isn't enough — nudge it to optically centre */
-  .schedback .barrow{
-    font-size:1.7em; line-height:1; font-weight:400;
-    position:relative; top:-0.04em;
-  }
-  .schedhead{
-    display:flex; justify-content:space-between;
-    font-size:clamp(9px,1vw,11px); letter-spacing:.28em;
-    text-transform:uppercase; color:var(--dim);
-    padding-bottom:14px; border-bottom:1px solid var(--hair); margin-bottom:6px;
-  }
-  .srow{
-    display:grid; grid-template-columns:auto 1fr auto auto;
-    gap:clamp(10px,2.4vw,26px); align-items:baseline;
-    padding:13px 0; border-bottom:1px solid rgba(43,43,43,.6);
-    font-size:clamp(10px,1.05vw,12px);
-    letter-spacing:.16em; text-transform:uppercase; color:var(--dimmer);
-    transition:color .3s;
-  }
-  .srow .shour{font-variant-numeric:tabular-nums; color:var(--dim);}
-  .srow .sname{letter-spacing:.22em;}
-  .srow .skind{font-style:italic; text-transform:none; letter-spacing:.04em;}
-  .srow .sto{font-variant-numeric:tabular-nums;}
-  .srow.now{color:var(--ink);}
-  .srow.now .shour{color:var(--ink);}
-  .srow.now .sname{position:relative;}
-  .srow.now .sname::after{
-    content:'on air'; margin-left:14px; font-size:.78em;
-    letter-spacing:.2em; color:var(--quiet);
-  }
-
-  /* ---------- expandable track lists ---------- */
-  .srow.expandable{cursor:pointer;}
-  .srow.expandable .skind::after{
-    content:' +'; font-style:normal; color:var(--quiet);
-  }
-  .sgroup.open .srow.expandable .skind::after{content:' –';}
-
-  .stracks{
-    display:none;
-    padding:4px 0 14px;
-    border-bottom:1px solid rgba(43,43,43,.6);
-  }
-  .sgroup.open .stracks{display:block;}
-
-  .strack{
-    display:grid; grid-template-columns:2.2em 1fr auto;
-    gap:clamp(8px,2vw,20px); align-items:baseline;
-    padding:5px 0; font-size:clamp(9px,.98vw,11px);
-    letter-spacing:.1em; color:var(--dim);
-    line-height:1.5;
-  }
-  .strack .snum{font-variant-numeric:tabular-nums; color:var(--quiet);}
-  .strack .slen{font-variant-numeric:tabular-nums; color:var(--quiet);}
-  .strack.playing{color:var(--ink);}
-  .strack.playing .snum, .strack.playing .slen{color:var(--ink);}
-  .schedfoot{
-    margin-top:18px; font-size:clamp(9px,1vw,11px);
-    font-style:italic; letter-spacing:.04em; color:var(--dimmer);
-    line-height:1.8; max-width:62ch;
-  }
-  .schedfoot em{color:var(--quiet); font-style:italic;}
-
-  .credits{margin-top:26px; padding-top:16px; border-top:1px solid var(--hair);}
-  .chead{
-    font-size:clamp(9px,1vw,11px); letter-spacing:.28em;
-    text-transform:uppercase; color:var(--dim); margin-bottom:10px;
-  }
-  .crow{
-    display:flex; justify-content:space-between; gap:20px;
-    font-size:clamp(9px,.95vw,10.5px); letter-spacing:.05em;
-    color:var(--dimmer); padding:4px 0; line-height:1.6;
-  }
-  .crow i{font-style:italic;}
-  .crow span:last-child{text-align:right; white-space:nowrap;}
-  /* inherit the white rather than take the browser's blue — a faint
-     rule marks them as links without breaking the monochrome */
-  .crow a{
-    color:inherit; text-decoration:none;
-    border-bottom:1px solid rgba(240,240,240,.3);
-    padding-bottom:1px; transition:border-color .3s;
-  }
-  .crow a:hover{border-bottom-color:var(--ink);}
-  @media (max-width:600px){
-    .crow{flex-direction:column; gap:1px; padding:6px 0;}
-    .crow span:last-child{text-align:left;}
-  }
-
-  /* ---------- the gate ----------
-     A real front door. It is shown on every visit and stays until the
-     visitor actually clicks — it is NOT conditional on whether the
-     browser would have allowed autoplay, because browsers grant that
-     permission to sites you've visited before, which meant returning
-     visitors never saw it and the music simply started on its own. */
-  .gate{
-    position:fixed; inset:0; z-index:10;
-    /* translucent so the station is visibly already running behind it
-       — the video and the HUD show through, which is the whole point of
-       "already in progress". The centre is darkened further because the
-       gate text lands directly on top of the huge track title, and the
-       two were competing. */
-    background:radial-gradient(42vw 34vw at 50% 50%,
-                 rgba(15,15,15,.62), transparent 72%),
-               rgba(15,15,15,.55);
-    backdrop-filter:blur(2px);
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:clamp(20px,2.8vw,32px);
-    cursor:pointer;
-    transition:opacity 1.2s ease, visibility 1.2s;
-  }
-  .gate.gone{opacity:0; visibility:hidden; pointer-events:none;}
-
-  .gate .gname{
-    font-size:clamp(26px,4.6vw,58px); font-weight:300;
-    letter-spacing:-.01em; color:var(--ink);
-    text-shadow:0 0 30px rgba(15,15,15,.95), 0 0 60px rgba(15,15,15,.8);
-  }
-  .gate .grule{
-    width:clamp(120px,17vw,220px); height:1px;
-    background:linear-gradient(90deg,transparent,var(--dimmer),transparent);
-  }
-  .gate .tune{
-    display:flex; align-items:center; gap:13px;
-    background:transparent; border:0; cursor:pointer;
-    font-family:var(--font); font-weight:700; font-style:italic;
-    font-size:clamp(15px,1.7vw,20px);
-    letter-spacing:.3em; color:var(--ink);
-    padding:12px 4px 13px; position:relative;
-    transition:letter-spacing .6s;
-  }
-  .gate .tune::before{
-    content:''; width:8px; height:8px; border-radius:50%;
-    background:var(--live); box-shadow:0 0 10px var(--live);
-    animation:gatepulse 3.4s ease-in-out infinite;
-  }
-  .gate .tune::after{
-    content:''; position:absolute; left:50%; bottom:5px; width:0; height:1px;
-    background:var(--ink); transform:translateX(-50%);
-    transition:width .6s ease; box-shadow:0 0 10px rgba(240,240,240,.7);
-  }
-  .gate:hover .tune{letter-spacing:.4em;}
-  .gate:hover .tune::after{width:100%;}
-  .gate .gsub{
-    font-style:italic; font-size:clamp(11px,1.15vw,13px);
-    letter-spacing:.08em; color:var(--dimmer);
-  }
-  @keyframes gatepulse{0%,100%{opacity:1}50%{opacity:.35}}
-
-  /* persistent control, so sound is never a one-time decision */
-  /* wraps rather than overflows — four controls is a long row on a phone */
-  .controls{display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-            justify-content:flex-end;}
-
-  /* ---------- volume slider ---------- */
-  .volwrap{
-    position:fixed; right:clamp(20px,3.6vw,46px); top:50%; z-index:3;
-    transform:translateY(-50%);
-    display:flex; flex-direction:column; align-items:center; gap:10px;
-    transition:opacity .5s;
-  }
-  body.sched-open .volwrap{opacity:0; pointer-events:none;}
-
-  .voltrack{
-    position:relative; width:24px; height:clamp(110px,16vh,180px);
-    cursor:pointer; touch-action:none;
-  }
-  /* the visible line runs down the centre; the wide box around it is
-     just a bigger, easier hit target for mouse and touch */
-  .voltrack::before{
-    content:''; position:absolute; left:50%; top:0; bottom:0; width:1px;
-    background:var(--hair); transform:translateX(-50%);
-  }
-  .volfill{
-    position:absolute; left:50%; bottom:0; width:1px; height:0%;
-    background:var(--ink); transform:translateX(-50%);
-  }
-  .volthumb{
-    position:absolute; left:50%; bottom:0%; width:11px; height:11px;
-    border-radius:50%; background:var(--ink);
-    transform:translate(-50%,50%);
-    box-shadow:0 0 10px rgba(240,240,240,.5);
-    transition:box-shadow .2s;
-  }
-  .voltrack:hover .volthumb, .voltrack.dragging .volthumb{
-    box-shadow:0 0 14px rgba(240,240,240,.8);
-  }
-  .vollabel{
-    font-size:10px; font-weight:700; letter-spacing:.2em;
-    color:var(--ink); font-variant-numeric:tabular-nums;
-    writing-mode:vertical-rl;
-  }
-
-  @media (max-width:600px){
-    .volwrap{display:none;}   /* touch volume is the OS hardware buttons */
-  }
-  #soundToggle{
-    color:var(--quiet); cursor:pointer; letter-spacing:.2em;
-    border-bottom:1px solid transparent; padding-bottom:2px;
-    transition:color .4s, border-color .4s;
-  }
-  #soundToggle:hover{color:var(--ink); border-color:var(--dimmer);}
-  #soundToggle.off{color:var(--live);}
-
-  @media (max-width:600px){
-    .queue{flex-direction:column; gap:7px;}
-    header{font-size:9px; letter-spacing:.13em;}
-    header .right{white-space:nowrap; line-height:1.9;}
-    .meta{gap:11px; letter-spacing:.15em;}
-    .block{gap:8px;}
-    /* keep the track count visible on a phone — it's the thing that tells
-       you the block holds more than the block name suggests. Drop the end
-       time instead, which is implied by the next row's start. */
-    .srow{grid-template-columns:auto 1fr auto; font-size:10px;}
-    .srow .sto{display:none;}
-    .strack{grid-template-columns:2em 1fr auto; letter-spacing:.06em;}
-  }
-
-  /* ---------- the exhibition layer ----------
-     Sits above the moving footage and below the visualiser. Two layers
-     again, so one plate can fade up while the other fades out. */
-  .art{
-    position:fixed; inset:0; width:100%; height:100%;
-    object-fit:cover; z-index:1;
-    opacity:0; transition:opacity 2.2s ease;
-    filter:grayscale(1) contrast(1.1) brightness(.5);
-    pointer-events:none;
-  }
-  .art.on{opacity:.5;}
-
-  /* The credit. This is the difference between wallpaper and a
-     collection: the picture is somebody's work and it says so, and the
-     line is a link straight into that piece's thread.
-
-     It sits under the station name rather than at the foot of the
-     screen, where it would land on top of the "up next" line — and it
-     reads better there anyway: the top-left corner becomes who we are
-     and what you are looking at, while everything about what you are
-     hearing stays in the middle and along the bottom. */
-  .artcred{
-    position:fixed; z-index:4;
-    left:clamp(20px,3.6vw,46px);
-    left:calc(clamp(20px,3.6vw,46px) + env(safe-area-inset-left));
-    top:clamp(20px,3.6vw,46px);
-    top:calc(clamp(20px,3.6vw,46px) + env(safe-area-inset-top) + 30px);
-    max-width:min(40vw,300px);
-    font-size:9px; letter-spacing:.16em; text-transform:uppercase;
-    line-height:1.8; opacity:0; transition:opacity 1.2s ease;
-    pointer-events:none;
-  }
-  .artcred.on{opacity:.55; pointer-events:auto;}
-  .artcred:hover{opacity:1;}
-  .artcred a{color:inherit; text-decoration:none; display:block;}
-  .artcred a:hover .an{border-color:var(--dimmer);}
-  .artcred .ak{display:block; opacity:.55;}
-  .artcred .an{display:block; font-weight:700;
-               border-bottom:1px solid transparent; transition:border-color .4s;}
-  .artcred .aw{display:block; opacity:.6;}
-
-  /* Under about 700px the header, the title and the transport are all
-     fighting for the same column, so the credit steps aside entirely —
-     the plate is still linked from the vault. */
-  @media (max-width:700px){
-    .artcred{display:none;}
-  }
-
-  /* The way into the thread for whatever is playing. Hidden during
-     generative blocks, which are synthesized on the spot and are not
-     pieces, so there is nothing to discuss. */
-  #discussLink{
-    color:var(--quiet); text-decoration:none; cursor:pointer;
-    border-bottom:1px solid var(--hair); padding-bottom:2px;
-    transition:color .4s, border-color .4s;
-  }
-  #discussLink:hover{color:var(--ink); border-color:var(--dimmer);}
-  #discussLink[hidden]{display:none;}
-
-  @media (prefers-reduced-motion:reduce){ .grain,.ember{animation:none;} }
-</style>
+        body { -webkit-touch-callout: none; }
+    </style>
 </head>
-<body data-visual="spectrum">
-
-<video class="bg" id="bgA" muted loop playsinline preload="auto"></video>
-<video class="bg" id="bgB" muted loop playsinline preload="auto"></video>
-<img class="art" id="artA" alt="">
-<img class="art" id="artB" alt="">
-<div class="hearth"></div>
-<div class="scrim"></div>
-<canvas id="viz"></canvas>
-<div class="vignette"></div>
-<div class="grain"></div>
-
-<div class="stage">
-  <header>
-    <div class="onair"><span class="ember"></span><span id="stationName">—</span></div>
-    <div class="right">
-      <div><span id="clock">--:--:--</span></div>
-      <div id="dayNo">—</div>
-    </div>
-  </header>
-
-  <div class="centre">
-    <div class="block">
-      <span id="blockName">—</span>
-      <span class="note" id="blockNote"></span>
-    </div>
-    <h1 id="title">—</h1>
-    <div class="meta">
-      <span id="by"></span>
-      <span id="counter"><b id="trkNo">—</b> <span class="sep">of</span> <b id="trkTot">—</b></span>
-      <a id="discussLink" href="#" hidden>discuss</a>
-    </div>
-  </div>
-
-  <footer>
-    <div class="blockline">
-      <span id="blockLeft">—</span>
-      <span class="blockbar"><i id="blockBar"></i></span>
-    </div>
-    <div class="bar"><i id="fill"></i></div>
-    <div class="times"><span id="elapsed">0:00</span><span id="remain">0:00</span></div>
-    <div class="queue">
-      <span id="upnext">up next — —</span>
-      <span class="controls">
-        <span id="soundToggle">sound</span>
-        <span class="sep">·</span>
-        <span id="tracklistToggle">tracklist</span>
-        <span class="sep">·</span>
-        <span id="schedToggle">schedule</span>
-        <span class="sep">·</span>
-        <a id="vaultLink" href="vault.html">vault</a>
-        <span class="sep" id="fullSep">·</span>
-        <span id="fullToggle">fullscreen</span>
-      </span>
-    </div>
-  </footer>
+<body>
+<div class="corner">
+<a class="mailmark" href="mailto:hello@audiospatials.com?subject=Vault" aria-label="Email">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5H4L12 11.6 20 5H22V19H2Z"/></svg>
+</a>
 </div>
 
+<p class="kicker label">Audiospatials</p>
+<a class="mark" href="/pieces" aria-label="Vault: all pieces">VAULT</a>
+<canvas class="geo" id="geo" aria-hidden="true"></canvas>
 
-<div class="volwrap" id="volwrap" role="slider" tabindex="0"
-     aria-label="volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
-  <span class="vollabel" id="volLabel">100</span>
-  <div class="voltrack" id="voltrack">
-    <div class="volfill" id="volFill"></div>
-    <div class="volthumb" id="volThumb"></div>
-  </div>
-</div>
-
-<div class="schedwrap">
-  <button class="schedback" id="schedBack" aria-label="close">
-    <span class="barrow">&#8592;</span><span>back</span>
-  </button>
-  <div class="schedinner">
-    <div class="schedhead"><span>The day</span><span>time</span></div>
-    <div id="sched"></div>
-    <div class="schedfoot">
-      The same programme runs every day, in the station's own time zone.
-      What plays inside each block shifts from one day to the next.
-      Blocks marked <em>generated</em> are synthesized as you listen and
-      have never played before.
+<div class="stream">
+    <p class="label"><span class="onair">On air</span><span>Unreleased, always on</span></p>
+    <div class="tracks">
+        <div class="track live"><button type="button" class="track-play" aria-label="Play the stream"><i></i></button><div class="track-name"><a class="track-title" href="/pieces"></a><span class="track-sub label"></span></div><span class="track-time label"></span><div class="track-bar" aria-hidden="true"><span></span></div></div>
     </div>
-
-    <div class="credits">
-      <div class="chead">Sources</div>
-
-      <div class="crow">
-        <span><a href="https://archive.org/details/youtube-OHNXot0w7A0"
-                 target="_blank" rel="noopener noreferrer">The many faces of a Torus</a></span>
-        <span><a href="https://creativecommons.org/licenses/by/3.0/"
-                 target="_blank" rel="noopener noreferrer">CC BY 3.0</a></span></div>
-
-      <div class="crow">
-        <span><a href="https://archive.org/details/AlbionMoonlightThePIRATEUTOPIAExperimentsVividTribeOfPsychics"
-                 target="_blank" rel="noopener noreferrer">The PIRATE UTOPIA Experiments</a></span>
-        <span>Vivid Tribe Of Psychics ·
-          <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/"
-             target="_blank" rel="noopener noreferrer">CC BY-NC-SA 3.0</a></span></div>
-
-      <div class="crow">
-        <span><a href="https://archive.org/details/introductiontothecathoderayoscilloscope"
-                 target="_blank" rel="noopener noreferrer">Introduction to the Cathode Ray Oscilloscope</a></span>
-        <span>archive.org</span></div>
-
-      <div class="crow">
-        <span><a href="https://archive.org/details/LearningAboutSound"
-                 target="_blank" rel="noopener noreferrer">Learning About Sound (2nd Ed)</a></span>
-        <span>courtesy Encyclopedia Britannica</span></div>
-
-      <div class="crow">
-        <span><a href="https://archive.org/details/WelcomeToCyberia"
-                 target="_blank" rel="noopener noreferrer">Welcome To Cyberia</a></span>
-        <span>archive.org</span></div>
-    </div>
-  </div>
+    <nav class="label"><a href="/pieces">All pieces</a><a href="https://audiospatials.com/">Audiospatials</a></nav>
 </div>
 
-<div class="gate" id="gate">
-  <div class="gname" id="gateName">—</div>
-  <div class="grule"></div>
-  <button class="tune" id="tune">tune in</button>
-  <div class="gsub">already in progress</div>
-</div>
-
-<div class="artcred" id="artCred">
-  <a id="artLink" href="#">
-    <span class="ak">on screen</span>
-    <span class="an" id="artTitle"></span>
-    <span class="aw" id="artBy"></span>
-  </a>
-</div>
-
-<audio id="au" crossorigin="anonymous"></audio>
-
-<script src="station.js"></script>
-<script src="clock.js"></script>
-<script src="synth.js"></script>
-<script src="visuals.js"></script>
-<script src="app.js"></script>
-<script src="exhibit.js"></script>
+<script src="/content/pieces.js"></script>
+<script src="/js/geo.js"></script>
+<script src="/js/vault.js"></script>
+<script>
+    const container = document.querySelector('.mark');
+    const kicker = document.querySelector('.kicker');
+    Geo.converge(document.getElementById('geo'), container.textContent, width => {
+        const r = container.getBoundingClientRect();
+        const s = Math.min(r.width / width, innerHeight * 0.16);
+        const y = r.top + r.height / 2 - s / 2;
+        kicker.style.top = (y - 20 - s * 0.25) + 'px';
+        return { x: (innerWidth - width * s) / 2, y, s };
+    }, { hold: 5, cycle: 21 });
+</script>
 </body>
 </html>

@@ -1,0 +1,259 @@
+/* Everything the inside pages share: heading, lede, ruled lists, the grid and
+   the click-to-load players. base.css stays the site-wide layer. */
+
+body { padding: clamp(30px, 8vh, 90px) clamp(20px, 7vw, 110px) 110px; }
+@media (max-width: 620px) { body { padding-top: 62px; padding-bottom: 150px; } }
+.wrap { max-width: 1180px; margin: 0 auto; }
+
+h1 { font-size: clamp(40px, 11vw, 150px); line-height: 0.82; letter-spacing: -0.045em;
+     font-weight: 700; text-transform: uppercase; overflow-wrap: anywhere; }
+h1 em { font-style: normal; color: var(--sig); margin-left: calc(0.045em + 2px); }
+/* Names run long (WOLFMANWOOF); artist pages set theirs a size down. */
+h1.name { font-size: clamp(34px, 8.6vw, 120px); }
+
+.lede { font-size: clamp(19px, 2.4vw, 30px); line-height: 1.45; letter-spacing: -0.01em; text-wrap: pretty;
+        max-width: 26ch; margin: clamp(26px, 5vh, 54px) 0 0; }
+.byline { margin: clamp(20px, 3.4vh, 34px) 0 0; line-height: 2.1; }
+
+.prose { max-width: 62ch; margin-top: clamp(30px, 6vh, 60px); }
+.prose p { font-size: 16px; line-height: 1.7; letter-spacing: 0.005em;
+           /* No single word left alone on a paragraph's last line. */
+           text-wrap: pretty; }
+.prose p + p { margin-top: 1.1em; }
+.prose a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--faint);
+           transition: color 0.2s, border-color 0.2s; }
+.prose a:hover { color: var(--sig); border-color: var(--sig); }
+
+section { margin-top: clamp(50px, 10vh, 110px); }
+section > .label:first-child { display: block; margin-bottom: 16px; }
+
+/* Ruled rows: name left, detail right. Links get the Visuospatials arrow. */
+.rows { list-style: none; max-width: 760px; }
+.rows li { border-top: 1px solid var(--rule); }
+.rows li:last-child { border-bottom: 1px solid var(--rule); }
+.rows .row { display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+             padding: 15px 0; color: var(--fg); text-decoration: none;
+             transition: color 0.2s, padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.rows .n { font-size: 15px; letter-spacing: -0.005em; }
+.rows .u { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.6;
+           color: var(--dim); text-align: right; transition: color 0.2s; }
+a.row .u::after { content: ""; display: inline-block; width: 0.5em; height: 0.5em;
+                  margin-left: 0.7em; vertical-align: 0.22em; background: currentColor;
+                  clip-path: polygon(0 0, 100% 0, 100% 100%); }
+a.row:hover, a.row:focus-visible { color: var(--sig); padding-left: 10px; }
+a.row:hover .u, a.row:focus-visible .u { color: var(--sig); }
+@media (max-width: 560px) {
+    .rows .row { flex-direction: column; gap: 4px; }
+    .rows .u { text-align: left; }
+}
+
+/* A grid of square tiles: artists, releases. */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 2vw, 28px);
+         margin-top: clamp(24px, 5vh, 54px); }
+@media (max-width: 1000px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .tiles { grid-template-columns: 1fr; } }
+.tile { display: block; color: inherit; text-decoration: none; }
+.tile .shot { aspect-ratio: 1; overflow: hidden; background: var(--rule); }
+.tile img { display: block; width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.tile:hover img, .tile:focus-visible img { transform: scale(1.02); }
+.tile .cap { display: flex; gap: 12px; align-items: baseline; padding: 10px 1px 0; line-height: 1.5; }
+.tile .t { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+           transition: color 0.2s; }
+.tile .m { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+           margin-left: auto; text-align: right; }
+.tile:hover .t, .tile:focus-visible .t { color: var(--sig); }
+
+/* The Artists grid centres an unfinished last row: a wrapping row of fixed
+   thirds (halves, wholes) instead of grid tracks, same sizes and gaps. */
+.tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 3;
+                  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
+.tiles.centered > .tile { width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); }
+@media (max-width: 1000px) { .tiles.centered { --cols: 2; } }
+@media (max-width: 480px)  { .tiles.centered { --cols: 1; } }
+
+/* Artist pages: the photo beside the words, stacked on a phone. */
+.artist-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+              gap: clamp(24px, 5vw, 80px); align-items: start; margin-top: clamp(26px, 5vh, 54px); }
+.artist-photo img, .artist-photo video { display: block; width: 100%; height: auto; background: var(--rule); }
+.artist-text .lede { margin-top: 0; }
+.artist-text .prose { margin-top: 0; }
+.artist-text .lede + .prose { margin-top: clamp(22px, 4vh, 40px); }
+/* wide: a clip as the main asset runs the full width, the words under it. */
+.artist-top.wide { grid-template-columns: 1fr; }
+.artist-top.wide .artist-text { max-width: 760px; }
+
+/* flip: the photo on the right. On a phone it still comes first. */
+.artist-top.flip { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+.artist-top.flip .artist-photo { order: 2; }
+@media (max-width: 760px) { .artist-top, .artist-top.flip { grid-template-columns: 1fr; }
+                            .artist-top.flip .artist-photo { order: 0; } }
+
+/* Photos further down a page keep their own shape. */
+.photos { columns: 2; column-gap: clamp(14px, 2vw, 28px); margin-top: clamp(24px, 5vh, 54px); }
+@media (max-width: 620px) { .photos { columns: 1; } }
+/* Looping clips, among the photos or as an artist's main asset, with a
+   sound button in the corner. */
+.clip { position: relative; }
+.clip video { display: block; width: 100%; height: auto; background: var(--rule); }
+.photos .clip { margin-bottom: clamp(14px, 2vw, 28px); break-inside: avoid; }
+.clip .sound { position: absolute; right: 10px; bottom: 10px; width: 28px; height: 28px; padding: 0;
+               border-radius: 50%; border: 1px solid rgba(242, 242, 239, 0.25); cursor: pointer;
+               background: rgba(10, 10, 10, 0.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+               color: var(--fg); display: grid; place-items: center;
+               transition: color 0.2s, border-color 0.2s, background 0.2s; }
+.clip .sound svg { width: 14px; height: 14px; fill: currentColor; }
+/* Small to look at, but still an easy tap. */
+.clip .sound::before { content: ''; position: absolute; inset: -8px; }
+.clip .sound:hover, .clip .sound:focus-visible { color: var(--sig); border-color: var(--sig); }
+.clip .sound[aria-pressed="true"] { background: rgba(10, 10, 10, 0.75); }
+
+/* Video players below the bio sit centred on the page. */
+.more { text-align: center; }
+.more .players { margin: 0 auto; text-align: left; }
+.more .note { margin-left: auto; margin-right: auto; }
+
+/* Four releases make a square: two by two. */
+.tiles.cube { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin-left: auto; margin-right: auto; }
+section:has(> .tiles.cube) > .label { text-align: center; }
+
+/* A single photo takes the whole width rather than half of it. */
+.photos:has(> img:only-child) { columns: 1; }
+.photos img { display: block; width: 100%; height: auto; margin-bottom: clamp(14px, 2vw, 28px);
+              break-inside: avoid; background: var(--rule); }
+
+/* Click-to-load players. Nothing from Spotify, SoundCloud or YouTube is
+   fetched until someone asks for it. */
+.players { display: grid; gap: clamp(14px, 2vw, 22px); max-width: 760px; }
+.player { position: relative; width: 100%; border: 1px solid var(--rule); background: #111110;
+          color: var(--fg); font: inherit; cursor: pointer; text-align: left; padding: 0;
+          display: block; overflow: hidden; }
+.player.video { aspect-ratio: 16 / 9; }
+.player.audio { min-height: 96px; }
+.player img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+              opacity: 0.72; transition: opacity 0.3s; }
+.player:hover img, .player:focus-visible img { opacity: 0.9; }
+.player .play { position: absolute; left: 18px; bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.player .play i { width: 38px; height: 38px; border-radius: 50%; background: var(--fg); display: grid;
+                  place-items: center; transition: background 0.2s; }
+.player .play i::after { content: ""; width: 12px; height: 14px; margin-left: 3px; background: var(--bg);
+                         clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.player:hover .play i, .player:focus-visible .play i { background: var(--sig); }
+.player .play b { font-weight: 400; font-size: 14px; text-shadow: 0 1px 12px rgba(0,0,0,0.7); }
+.player .play small { display: block; margin-top: 2px; }
+.player iframe { display: block; width: 100%; height: 100%; border: 0; }
+.player.audio iframe { height: 166px; }
+.player.audio.tall iframe { height: 352px; }
+.player.loaded { cursor: default; border-color: transparent; background: none; }
+.note { max-width: 62ch; margin-top: 18px; line-height: 1.9; }
+
+/* Rows whose right side is a sentence, not a label. */
+.rows.plain .u { text-transform: none; letter-spacing: 0; font-size: 14px; line-height: 1.5;
+                 max-width: 44ch; }
+
+/* The exit bar: sections centred, the copyright at the right edge.
+   base.css keeps the Visuospatials layout; this overrides it here only. */
+.exit { justify-content: center; text-align: center; }
+.exit .spacer { display: none; }
+.exit .copy { position: absolute; right: max(20px, env(safe-area-inset-right, 0px)); }
+/* Too narrow to keep clear of the centred links: it follows them instead. */
+@media (max-width: 1000px) { .exit .copy { position: static; } }
+
+/* Phones: no bottom bar. The same links drop down from the two-bar button in
+   the top right (js/menu.js), under the corner marks. */
+.menumark { display: none !important; }
+.footcopy { display: none; }
+@media (max-width: 760px) {
+    .menumark { display: grid !important; }
+    body { padding-bottom: 70px; }
+    .exit { display: none; }
+    html.menu-open .exit {
+        display: flex;
+        position: fixed;
+        top: 50px;
+        right: max(15px, env(safe-area-inset-right, 0px));
+        left: auto;
+        bottom: auto;
+        z-index: 220;
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+        gap: 18px;
+        min-width: 200px;
+        padding: 22px 22px 20px;
+        border: 1px solid var(--rule);
+        font-size: 12px;
+        animation: drop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html.menu-open .exit::after { display: none; }
+    html.menu-open .exit .copy { display: none; }
+    .footcopy { display: block; max-width: 1180px; margin: clamp(50px, 10vh, 90px) auto 0;
+                font-size: 10px; text-align: center; }
+}
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+
+/* SoundCloud under an artist's bio. */
+.listen-here { margin-top: clamp(30px, 5vh, 50px); }
+.listen-here .label:first-child { display: block; margin-bottom: 14px; }
+.listen-here .tracks { margin-bottom: 0; }
+
+/* SoundCloud tracks: our own rows, no box. Hairlines like the other lists,
+   an outlined play button, and a hairline that fills red as it plays. */
+.tracks { max-width: 760px; margin-bottom: clamp(14px, 2vw, 22px); }
+.track { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
+         column-gap: 16px; padding: 16px 0 0; border-top: 1px solid var(--rule); }
+.track:last-child { border-bottom: 1px solid var(--rule); }
+.track-play { appearance: none; width: 40px; height: 40px; border-radius: 50%; padding: 0;
+              border: 1px solid var(--faint); background: transparent; color: var(--fg);
+              display: grid; place-items: center; cursor: pointer;
+              transition: border-color 0.2s, color 0.2s, background 0.2s; }
+.track-play i { width: 11px; height: 13px; margin-left: 3px; background: currentColor;
+                clip-path: polygon(0 0, 100% 50%, 0 100%); }
+/* Pause: two bars, the second a shadow of the first. */
+.track[data-state="playing"] .track-play i { width: 4px; height: 12px; margin-left: 0; clip-path: none;
+                                             box-shadow: 6px 0 0 currentColor; transform: translateX(-3px); }
+.track[data-state="loading"] .track-play { border-color: var(--dim); }
+.track[data-state="loading"] .track-play i { opacity: 0.4; }
+.track-play:hover, .track-play:focus-visible { border-color: var(--sig); color: var(--sig); }
+.track[data-state="playing"] .track-play { border-color: var(--fg); }
+.track-name { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.track-title { font-size: 15px; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track[data-state="playing"] .track-title { color: var(--sig); }
+.track-time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* The way out to SoundCloud, always there under the title, with the site's small arrow. */
+.track-sub a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
+.track-sub a::after { content: ""; display: inline-block; width: 0.5em; height: 0.5em; margin-left: 0.6em;
+                      vertical-align: 0.22em; background: currentColor; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.track-sub a:hover, .track-sub a:focus-visible { color: var(--sig); }
+.track-bar { grid-column: 1 / -1; height: 17px; margin-top: 6px; position: relative; cursor: pointer; }
+.track-bar::before, .track-bar span { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; }
+.track-bar::before { background: var(--rule); }
+.track-bar span { background: var(--sig); transform: scaleX(0); transform-origin: left; transition: transform 0.25s linear; }
+.track[data-state="idle"] .track-bar { cursor: default; }
+/* The service's own player: out of sight while it plays for us, shown only
+   if the browser won't start it hidden. */
+.track-frame { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
+.track-frame iframe { display: block; width: 100%; border: 0; }
+.track.native .track-frame { position: static; grid-column: 1 / -1; width: 100%; height: auto;
+                             overflow: visible; opacity: 1; pointer-events: auto; margin: 4px 0 14px; }
+.track.native .track-frame iframe { height: 120px; }
+.track.native[data-kind="spotify"] .track-frame iframe { height: 152px; border-radius: 12px; }
+.track.native .track-bar { display: none; }
+
+/* Page titles breathe out as you scroll: letter-spacing opens from tight to
+   a little looser over the first quarter of a screen, and closes again on
+   the way back up. Tied to the scroll, not a timer. Browsers without
+   scroll-linked animation (and anyone who asks for less motion) keep it still. */
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .wrap > h1 {
+            animation: title-open linear both;
+            animation-timeline: scroll(root block);
+            /* Done by the time the title has scrolled off, so all of it is seen. */
+            animation-range: 0 25vh;
+        }
+    }
+}
+@keyframes title-open { to { letter-spacing: 0.03em; } }
+/* A title that already wraps (Contact's, on narrower screens) stays still, or it re-wraps mid-scroll. */
+.wrap > h1.still { animation: none; }

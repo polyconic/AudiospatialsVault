@@ -1,87 +1,85 @@
-# Audiospatials Vault — conventions
+# Audiospatials Vault — working notes
 
-Read this before editing. Read `README.md` too; it explains what the site is.
+Unreleased and unfinished work from Audiospatials, on a stream that plays
+around the clock, with a page per piece. Lives at `vault.audiospatials.com`,
+under the studio site (repo `polyconic/Audiospatials`,
+`~/Documents/GitHub/audiospatials`). `README.md` is the public face; this is
+the working document.
 
-## The two halves
+**Remade 2026-09-27** to look like audiospatials.com and visuospatials.com.
+The first version (a fork of Delilah's Vault: scheduled blocks, generated
+sound, visualisers, placeholder art and footage, and a Reddit-style comment
+thread per piece on Supabase) is all in git history. **Comments were dropped
+on purpose** — Greg's call: empty threads make unfinished work look unloved,
+strangers critiquing artists' demos needs moderating, and a database is one
+more thing to run. Feedback goes by email instead ("Tell us what you think" on
+each piece page). Don't bring comments back without asking.
 
-The stream (`index.html`) and the vault (`vault.html`, `piece.html`) are
-different kinds of page and should stay that way. The stream is fixed,
-full-bleed and never scrolls; its styling is inline in `index.html`. The
-vault pages are documents — they scroll, they have a measure, they are read
-rather than watched; they share `vault.css`. Do not merge the two
-stylesheets.
+## Pieces
 
-## Rules that are settled — don't relitigate
+`content/pieces.js` is the whole interface: one entry per piece. To add one:
+encode it to `audio/` (AAC in .m4a, as the two there), add an entry with an
+**accurate `duration` in seconds** (the stream's clock is built on it —
+`ffprobe -v error -show_entries format=duration -of csv=p=0 file`), then
+`node tools/build.mjs` and commit what it writes. Masters stay out of git:
+`tracks/` is ignored.
 
-- **What is on air is a pure function of the wall clock.** Nothing about
-  the broadcast is stored and nothing is random at runtime, so every
-  listener gets the same thing at the same moment. Comments are the only
-  stored state on the site.
-- **The station keeps its own time zone** (`STATION.tzOffset`), not the
-  viewer's. It preserves the shared-broadcast feeling.
-- **Anything the sound or the picture depends on runs on `setInterval`,
-  never `requestAnimationFrame`.** Browsers pause rAF in background tabs,
-  and this is a station people leave running in one.
-- **Generative audio must stay deterministic from the clock** — seeded PRNG
-  plus wall-clock-derived events, never `Math.random()` or
-  `ctx.currentTime`.
-- **The mute gain sits downstream of the analyser** (mix → analyser →
-  master → destination), so the visualiser keeps moving while muted.
-  Muting upstream freezes the picture and makes the page look broken.
-- **Threads have no voting.** Nesting and collapse only. On unfinished work
-  a downvote reads as a verdict on the piece rather than on the reply.
+The build writes `<slug>.html` per piece (whole; removes pages of pieces no
+longer listed) and the list in `pieces.html` between its build markers.
+`index.html` and the rest of `pieces.html` are hand-written. The browser also
+loads `content/pieces.js` directly, for the stream.
 
-## Slugs
+A slug is a page address: keep it once the page has been shared.
 
-Every piece in `station.js` has a `slug`, and it is the only link between a
-piece and its thread. Renaming a slug orphans a conversation and there is no
-migration for it. Titles can change freely; slugs cannot, once anyone has
-commented.
+## The stream (`js/vault.js`)
 
-## Security
+- **What's on air is a pure function of the wall clock** and
+  `VAULT.epoch`, so everyone hears the same moment. The pieces play end to
+  end; the order reshuffles each pass through, seeded by the pass number so
+  every browser agrees. Never change `epoch` once live.
+- Play joins live; stop and play again rejoins live, like a radio. The line
+  under it fills with the clock and doesn't seek. It re-syncs if it drifts
+  more than 3s, and moves to the next piece on the clock's word.
+- **Play starts inside the tap** — Safari refuses sound started any later.
+  The audio's metadata preloads so the seek to the live position lands.
+- Timers are `setInterval`, not `requestAnimationFrame`: browsers stop rAF in
+  background tabs, and the stream gets left running in one.
+- Rows (`.track[data-file]`) on the list and piece pages play a piece on
+  demand from the start and seek on click. One thing plays at a time. The
+  piece on air gets a red "On air" mark wherever it's listed.
+- The rows reuse the studio site's `.track` look from `css/pages.css`.
 
-`threads.js` is the one place on the site where a stranger's text reaches
-the page. It never uses `innerHTML` for user content — handles and bodies go
-in as text nodes, always. Keep it that way. If rich text is ever wanted,
-that is a sanitiser and a decision, not a quick change.
+## Shared with audiospatials.com
 
-Writes never touch the table directly. `anon` has no insert, update or
-delete; everything goes through `post_comment` and `delete_comment` in
-`supabase.sql`, which is where every rule about what counts as a valid
-comment lives. Validation added only on the client can be routed around by
-anyone with a console, so any new rule goes in the SQL function first.
+`css/base.css`, `css/pages.css`, `js/geo.js`, `js/nav.js`, `js/menu.js` and
+`assets/` are copies from the audiospatials repo; change them there and copy
+over. **One difference:** here `geo.js`'s `arrive` keeps each word's letters
+together, so long titles wrap at spaces rather than between any two letters
+("MASTE / R 1" on a piece page). Audiospatials doesn't have that yet.
+Vault-only styles are in `css/vault.css`.
 
-Never put the Supabase `service_role` key in `config.js` or anywhere else in
-this repo. `config.js` ships to every visitor.
+The front page's VAULT wordmark is `Geo.converge` like the main sites', set
+larger (`12vw` against their `7vw`) because it's five letters, not thirteen.
 
-## Local mode
+## Preview
 
-With `config.js` empty the site keeps threads in `localStorage` and shows a
-`local only` badge. The whole interface can be built and tested this way.
-Local mode deliberately does not enforce the server's length and rate rules
-— it is a layout harness, not a simulator.
-
-## Comments in code
-
-Minimal. Explain why something is the way it is when the reason is not
-obvious from reading it — especially the ones that look wrong but are load-
-bearing. Don't narrate what the next line does.
+`python3 tools/serve.py` → localhost:8766 (launch config `vault`). Unlike the
+studio site's copy it answers **range requests** — without them the browser
+can't seek into audio, so the stream would always start from 0:00 locally.
+GitHub Pages does ranges itself.
 
 ## Deploying
 
-GitHub Pages from `main`, same as the other sites. **Pushing to `main`
-publishes.** There is no staging. Confirm before pushing, and leave the push
-to Gregor unless he asks otherwise.
+GitHub Pages from `main`, root. **Pushing to `main` publishes.** Greg pushes;
+Claude commits locally and stops. No co-author trailer.
 
-**Address: `vault.audiospatials.com`** (`CNAME`), a subdomain of the main
-studio site (repo `polyconic/Audiospatials`). DNS is at Namecheap: one CNAME
+**Address: `vault.audiospatials.com`** (`CNAME`). DNS at Namecheap: one CNAME
 record, `vault` → `polyconic.github.io.`. Add only that — **never touch the
 domain's MX or TXT records**, they carry @audiospatials.com mail.
 
-**Unlisted, not private (Greg's choice, 2026-09-27).** Until launch the vault
-is hidden, not locked: every page carries `noindex, nofollow`, `robots.txt`
-disallows everything, and nothing on audiospatials.com links here. Anyone with
-the address can still open it and fetch `audio/` directly; a Cloudflare Access
-login was offered for real privacy and declined for now. **Launch** = remove
-the robots meta from the three pages (piece.html had `index,follow` before; put that back), delete `robots.txt`, and link it from
-the main site.
+**Unlisted, not private (Greg's choice, 2026-09-27).** Until launch every page
+carries `noindex, nofollow` (the build's template too), `robots.txt`
+disallows everything, and nothing on audiospatials.com links here. The repo is
+public, so anyone can find the audio. **Launch** = drop the robots meta from
+`index.html`, `pieces.html`, `404.html` and the build's `head()`, delete
+`robots.txt`, rebuild, and link the vault from the main site.
