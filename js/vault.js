@@ -8,7 +8,7 @@
 
    It always starts muted — Greg's call: people tune in if they want (and
    browsers won't start sound without a tap anyway). A tap on a sound button
-   unmutes it, inside the tap, as Safari requires.
+   tunes in, inside the tap, as Safari requires.
 
    The sound buttons: .track.live on the front, and on the tracklist and piece
    pages the row of whichever piece is on air (.track[data-slug]; the others
@@ -69,10 +69,15 @@
 
     // ---------- the one audio element
 
+    // Muted, nothing is heard, so nothing downloads: the element has no
+    // source at all and the line and clock run on the clock alone. (Even
+    // preload="metadata" lets Chrome buffer ahead.) Tuning in gives it the
+    // piece on air inside the tap. Muting keeps it running silently for a
+    // minute, so tuning back in is instant, then lets it go.
+    const GRACE = 60000;
     const audio = new Audio();
     audio.preload = 'auto';
-    audio.muted = true;
-    let current = null;
+    let current = null, listening = false, running = false, letGo = 0;
 
     const tuneTo = (piece, off) => {
         if (current !== piece) {
@@ -86,21 +91,36 @@
         else audio.addEventListener('loadedmetadata', () => { audio.currentTime = onAir().off; }, { once: true });
     };
 
-    const start = () => audio.play().catch(() => {});
+    const release = () => { running = false; current = null; audio.pause(); audio.removeAttribute('src'); audio.load(); };
 
-    // Paused from outside (headphones, lock screen): the stream doesn't stop
-    // for anyone, so that means sound off; tick() picks it back up, muted.
-    audio.addEventListener('pause', () => { if (!audio.ended && !audio.muted) { audio.muted = true; render(); } });
-    if ('mediaSession' in navigator) {
-        navigator.mediaSession.setActionHandler('pause', () => { audio.muted = true; render(); });
-        navigator.mediaSession.setActionHandler('play', () => { audio.muted = false; start(); render(); });
-    }
-
-    const toggle = () => {
-        audio.muted = !audio.muted;
-        if (audio.paused) { const { piece, off } = onAir(); tuneTo(piece, off); audio.play().catch(() => {}); }
+    const listen = () => {
+        clearTimeout(letGo);
+        listening = true;
+        audio.muted = false;
+        if (!running) {
+            running = true;
+            const { piece, off } = onAir();
+            tuneTo(piece, off);
+        }
+        audio.play().catch(() => { listening = false; release(); render(); });
         render();
     };
+    const mute = () => {
+        listening = false;
+        audio.muted = true;
+        clearTimeout(letGo);
+        letGo = setTimeout(release, GRACE);
+        render();
+    };
+    const toggle = () => listening ? mute() : listen();
+
+    // Paused from outside (headphones, lock screen): the stream doesn't stop
+    // for anyone, so that counts as sound off.
+    audio.addEventListener('pause', () => { if (running && !audio.ended) { listening = false; audio.muted = true; release(); render(); } });
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('pause', mute);
+        navigator.mediaSession.setActionHandler('play', listen);
+    }
 
     // ---------- the controls
 
@@ -117,7 +137,7 @@
 
     function render() {
         const { piece, off } = onAir();
-        const loud = !audio.paused && !audio.muted;
+        const loud = listening;
         const at = `scaleX(${off / piece.duration})`;
 
         if (live) {
@@ -149,10 +169,11 @@
     }
 
     function tick() {
-        const { piece, off } = onAir();
-        if (current !== piece) { tuneTo(piece, off); start(); }
-        else if (audio.readyState >= 1 && Math.abs(audio.currentTime - off) > 3) audio.currentTime = off;
-        else if (audio.paused && !audio.ended) start();
+        if (running) {
+            const { piece, off } = onAir();
+            if (current !== piece) { tuneTo(piece, off); audio.play().catch(() => {}); }
+            else if (audio.readyState >= 1 && Math.abs(audio.currentTime - off) > 3) audio.currentTime = off;
+        }
         render();
     }
 

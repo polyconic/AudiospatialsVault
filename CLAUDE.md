@@ -51,8 +51,13 @@ A slug is a page address: keep it once the page has been shared.
   it drifts more than 3s and moves to the next piece on the clock's word.
 - Timers are `setInterval`, not `requestAnimationFrame`: browsers stop rAF in
   background tabs, and the stream gets left running in one.
-- Every visitor downloads whatever is on air, muted or not — that's the cost
-  of it already playing.
+- **Muted downloads nothing** (Greg agreed, 2026-09-27). Until someone tunes
+  in, the audio element has no source at all; the line and clock run on the
+  clock alone, so it still looks live. (`preload="metadata"` isn't enough —
+  Chrome buffered 49s with it.) Tuning in sets the source and plays inside
+  the tap, then seeks to the live moment once metadata arrives: about half a
+  second to sound. Muting keeps it running silently for 60s (`GRACE`), so
+  tuning back in is instant, then drops the source.
 
 ## Shared with audiospatials.com
 
