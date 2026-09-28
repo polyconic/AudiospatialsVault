@@ -72,3 +72,16 @@ bearing. Don't narrate what the next line does.
 GitHub Pages from `main`, same as the other sites. **Pushing to `main`
 publishes.** There is no staging. Confirm before pushing, and leave the push
 to Gregor unless he asks otherwise.
+
+**Address: `vault.audiospatials.com`** (`CNAME`), a subdomain of the main
+studio site (repo `polyconic/Audiospatials`). DNS is at Namecheap: one CNAME
+record, `vault` → `polyconic.github.io.`. Add only that — **never touch the
+domain's MX or TXT records**, they carry @audiospatials.com mail.
+
+**Unlisted, not private (Greg's choice, 2026-09-27).** Until launch the vault
+is hidden, not locked: every page carries `noindex, nofollow`, `robots.txt`
+disallows everything, and nothing on audiospatials.com links here. Anyone with
+the address can still open it and fetch `audio/` directly; a Cloudflare Access
+login was offered for real privacy and declined for now. **Launch** = remove
+the robots meta from the three pages, delete `robots.txt`, and link it from
+the main site.
