@@ -115,7 +115,7 @@ a { color: inherit; }
   background: var(--bg);
 }
 .exit a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
-.exit a:hover { color: var(--fg); }
+@media (hover: hover) { .exit a:hover { color: var(--fg); } }
 .exit .here { color: var(--sig); }
 .exit .copy { color: var(--dim); }
 .exit .spacer { flex: 1; }
@@ -151,12 +151,16 @@ a { color: inherit; }
   height: 20px;
   fill: currentColor;
 }
-.backmark:hover, .backmark:focus-visible,
-.homemark:hover, .homemark:focus-visible {
+.backmark:focus-visible, .homemark:focus-visible {
   mix-blend-mode: normal;
   color: var(--sig);
   transform: scale(1.14);
 }
+@media (hover: hover) { .backmark:hover, .homemark:hover {
+  mix-blend-mode: normal;
+  color: var(--sig);
+  transform: scale(1.14);
+} }
 
 .homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 
@@ -191,12 +195,16 @@ a { color: inherit; }
   height: 20px;
   fill: currentColor;
 }
-.corner a:hover, .corner a:focus-visible,
-.corner button:hover, .corner button:focus-visible {
+.corner a:focus-visible, .corner button:focus-visible {
   mix-blend-mode: normal;
   color: var(--sig);
   transform: scale(1.14);
 }
+@media (hover: hover) { .corner a:hover, .corner button:hover {
+  mix-blend-mode: normal;
+  color: var(--sig);
+  transform: scale(1.14);
+} }
 
 .corner { transition: opacity 0.3s ease; }
 

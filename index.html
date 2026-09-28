@@ -36,7 +36,8 @@
         .stream .tracks { max-width: none; margin-bottom: 0; }
         .stream nav { margin-top: 18px; display: flex; justify-content: center; gap: 22px; }
         .stream nav a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
-        .stream nav a:hover, .stream nav a:focus-visible { color: var(--fg); }
+        .stream nav a:focus-visible { color: var(--fg); }
+        @media (hover: hover) { .stream nav a:hover { color: var(--fg); } }
 
         body { -webkit-touch-callout: none; }
     </style>
