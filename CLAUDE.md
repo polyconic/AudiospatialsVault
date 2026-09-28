@@ -83,5 +83,5 @@ is hidden, not locked: every page carries `noindex, nofollow`, `robots.txt`
 disallows everything, and nothing on audiospatials.com links here. Anyone with
 the address can still open it and fetch `audio/` directly; a Cloudflare Access
 login was offered for real privacy and declined for now. **Launch** = remove
-the robots meta from the three pages, delete `robots.txt`, and link it from
+the robots meta from the three pages (piece.html had `index,follow` before; put that back), delete `robots.txt`, and link it from
 the main site.
