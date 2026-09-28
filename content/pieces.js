@@ -6,7 +6,7 @@
    - slug      the page's address. Keep it once the page has been shared.
    - duration  seconds, and accurate: the stream's clock is built on it
                (ffprobe -v error -show_entries format=duration -of csv=p=0 file).
-   - status    'work in progress' | 'unreleased' | 'abandoned'
+   - status    'sketch' | 'work in progress' | 'unreleased' | 'abandoned'
    - note      a line or two from Gregor or Hunter: what it is, what's unsure,
                what changed. Optional. */
 
@@ -22,7 +22,7 @@ const PIECES = [
         slug: 'dream-state',
         title: 'dream state',
         artist: 'Gregor Egan',
-        status: 'unreleased',
+        status: 'sketch',
         file: 'audio/dream-state.m4a',
         duration: 203.52,
         note: '',
@@ -30,8 +30,8 @@ const PIECES = [
     {
         slug: 'side-quest',
         title: 'side quest',
-        artist: 'Gregor Egan',
-        status: 'unreleased',
+        artist: 'WOLFMANWOOF',
+        status: 'sketch',
         file: 'audio/side-quest.m4a',
         duration: 160.62,
         note: '',
@@ -42,7 +42,7 @@ const PIECES = [
         artist: 'WOLFMANWOOF',
         status: 'unreleased',
         file: 'audio/loop-windows-xp.m4a',
-        duration: 236.15,
+        duration: 182.02,
         note: '',
     },
     {
@@ -58,7 +58,7 @@ const PIECES = [
         slug: 'prototype-v1',
         title: 'prototype v1',
         artist: 'Gregor Egan',
-        status: 'work in progress',
+        status: 'sketch',
         file: 'audio/prototype-v1.m4a',
         duration: 355.26,
         note: '',
@@ -67,7 +67,7 @@ const PIECES = [
         slug: 'prototype-v2',
         title: 'prototype v2',
         artist: 'Gregor Egan',
-        status: 'work in progress',
+        status: 'sketch',
         file: 'audio/prototype-v2.m4a',
         duration: 367.3,
         note: '',
