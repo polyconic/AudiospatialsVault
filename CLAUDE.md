@@ -74,6 +74,10 @@ ink }`. `opts.still` is a vault-only addition to `geo.js` that draws the word
 once, assembled. It's set larger (`12vw` against their `7vw`) because it's
 five letters, not thirteen.
 
+- **Hover styles go inside `@media (hover: hover)`** (2026-09-27). On iOS a tap
+  on anything with a :hover style is spent showing the hover, so the menu
+  took two taps. Keep `:focus-visible` outside it, for keyboards.
+
 ## Preview
 
 `python3 tools/serve.py` → localhost:8766 (launch config `vault`). Unlike the
