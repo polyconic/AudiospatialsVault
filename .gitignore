@@ -6,3 +6,6 @@ __pycache__/
 # raw WAV/MP3 sources — the site only ever serves the encoded copies in
 # audio/. Masters have no business in a static site's git history.
 tracks/
+
+# sources for the vault, encoded into audio/
+unreleased for vault/
