@@ -68,8 +68,11 @@ together, so long titles wrap at spaces rather than between any two letters
 ("MASTE / R 1" on a piece page). Audiospatials doesn't have that yet.
 Vault-only styles are in `css/vault.css`.
 
-The front page's VAULT wordmark is `Geo.converge` like the main sites', set
-larger (`12vw` against their `7vw`) because it's five letters, not thirteen.
+The front page's VAULT wordmark is drawn by `Geo.converge` like the main
+sites', but **still and all white** (Greg, 2026-09-27): `{ still: true, dim:
+ink }`. `opts.still` is a vault-only addition to `geo.js` that draws the word
+once, assembled. It's set larger (`12vw` against their `7vw`) because it's
+five letters, not thirteen.
 
 ## Preview
 

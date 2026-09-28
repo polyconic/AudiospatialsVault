@@ -18,7 +18,8 @@
 
         /* The wordmark, drawn by geo.js over the link's own text, which stays
            as the hit area and for readers. It leads to the list. Five letters
-           against the main sites' thirteen, so it's set larger to carry the same weight. */
+           against the main sites' thirteen, so it's set larger to carry the same weight.
+           Unlike theirs it stands still and is all white (Greg, 2026-09-27). */
         .mark {
             position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%);
             font-family: var(--sans); font-size: clamp(24px, 12vw, 280px); font-weight: 700;
@@ -71,7 +72,7 @@
         const y = r.top + r.height / 2 - s / 2;
         kicker.style.top = (y - 20 - s * 0.25) + 'px';
         return { x: (innerWidth - width * s) / 2, y, s };
-    }, { hold: 5, cycle: 21 });
+    }, { still: true, dim: '#f2f2ef' });
 </script>
 </body>
 </html>

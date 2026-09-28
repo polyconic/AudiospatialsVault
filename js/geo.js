@@ -249,7 +249,8 @@
             });
         }
 
-        if (MOVING) (function loop(ms) { render(ms / 1000); requestAnimationFrame(loop); })(0);
+        // opts.still: draw the word once, assembled (the vault's front).
+        if (MOVING && !opts.still) (function loop(ms) { render(ms / 1000); requestAnimationFrame(loop); })(0);
         else { render(0); addEventListener('resize', () => render(0)); }
 
         return {
