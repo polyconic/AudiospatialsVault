@@ -7,8 +7,12 @@ h1.piece { font-size: clamp(30px, 7vw, 110px); line-height: 0.9; }
 a.track-title { color: inherit; text-decoration: none; transition: color 0.2s; }
 a.track-title:hover, a.track-title:focus-visible { color: var(--sig); }
 
-/* The stream's line fills with the clock and can't be seeked. */
-.track.live .track-bar { cursor: default; }
+/* The one control is sound on / off, in the play button's circle. It shows
+   only on the piece on air; no line can be seeked. */
+.track-play svg { width: 18px; height: 18px; fill: currentColor; }
+.track .track-bar { cursor: default; }
+.track[data-slug]:not(.on-air) .track-play { visibility: hidden; }
+.track.on-air .track-title { color: var(--sig); }
 
 /* "On air": a red dot beside whichever piece the stream is playing. */
 .onair { color: var(--sig); white-space: nowrap; }

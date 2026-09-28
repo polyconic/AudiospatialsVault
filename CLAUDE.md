@@ -1,7 +1,7 @@
 # Audiospatials Vault — working notes
 
 Unreleased and unfinished work from Audiospatials, on a stream that plays
-around the clock, with a page per piece. Lives at `vault.audiospatials.com`,
+around the clock, with a tracklist and a page per piece. Lives at `vault.audiospatials.com`,
 under the studio site (repo `polyconic/Audiospatials`,
 `~/Documents/GitHub/audiospatials`). `README.md` is the public face; this is
 the working document.
@@ -25,8 +25,8 @@ encode it to `audio/` (AAC in .m4a, as the two there), add an entry with an
 `tracks/` is ignored.
 
 The build writes `<slug>.html` per piece (whole; removes pages of pieces no
-longer listed) and the list in `pieces.html` between its build markers.
-`index.html` and the rest of `pieces.html` are hand-written. The browser also
+longer listed) and the list in `tracklist.html` between its build markers.
+`index.html` and the rest of `tracklist.html` are hand-written. The browser also
 loads `content/pieces.js` directly, for the stream.
 
 A slug is a page address: keep it once the page has been shared.
@@ -37,17 +37,22 @@ A slug is a page address: keep it once the page has been shared.
   `VAULT.epoch`, so everyone hears the same moment. The pieces play end to
   end; the order reshuffles each pass through, seeded by the pass number so
   every browser agrees. Never change `epoch` once live.
-- Play joins live; stop and play again rejoins live, like a radio. The line
-  under it fills with the clock and doesn't seek. It re-syncs if it drifts
-  more than 3s, and moves to the next piece on the clock's word.
-- **Play starts inside the tap** — Safari refuses sound started any later.
-  The audio's metadata preloads so the seek to the live position lands.
+- **No play button, nothing on demand** (Greg, 2026-09-27). The stream is
+  already running when you arrive, **muted** — his call: people tune in if
+  they want. The only control is sound on / off (the speaker in the circle).
+  A piece can only be heard while it's on air.
+- Where the button is: the front page's live row, and on the tracklist and
+  piece pages the row of whichever piece is on air. Other rows show no
+  button; an off-air piece page says when it's next on ("On air next in 36
+  min"). No line can be seeked.
+- Pausing from outside (headphones, lock screen) counts as sound off; the
+  stream itself never stops.
+- Unmuting happens inside the tap, as Safari requires. The stream re-syncs if
+  it drifts more than 3s and moves to the next piece on the clock's word.
 - Timers are `setInterval`, not `requestAnimationFrame`: browsers stop rAF in
   background tabs, and the stream gets left running in one.
-- Rows (`.track[data-file]`) on the list and piece pages play a piece on
-  demand from the start and seek on click. One thing plays at a time. The
-  piece on air gets a red "On air" mark wherever it's listed.
-- The rows reuse the studio site's `.track` look from `css/pages.css`.
+- Every visitor downloads whatever is on air, muted or not — that's the cost
+  of it already playing.
 
 ## Shared with audiospatials.com
 
@@ -81,5 +86,5 @@ domain's MX or TXT records**, they carry @audiospatials.com mail.
 carries `noindex, nofollow` (the build's template too), `robots.txt`
 disallows everything, and nothing on audiospatials.com links here. The repo is
 public, so anyone can find the audio. **Launch** = drop the robots meta from
-`index.html`, `pieces.html`, `404.html` and the build's `head()`, delete
+`index.html`, `tracklist.html`, `404.html` and the build's `head()`, delete
 `robots.txt`, rebuild, and link the vault from the main site.

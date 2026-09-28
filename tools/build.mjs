@@ -2,9 +2,9 @@
 
    node tools/build.mjs
 
-   - <slug>.html   one page per piece, whole (and removes pages of pieces no
-                   longer listed; a built page says so on its second line)
-   - pieces.html   the list, between <!-- build:pieces --> markers
+   - <slug>.html     one page per piece, whole (and removes pages of pieces no
+                     longer listed; a built page says so on its second line)
+   - tracklist.html  the list, between <!-- build:tracklist --> markers
 
    Run it after changing content/, and commit what it writes. */
 
@@ -33,18 +33,18 @@ const BUILT = '<!-- Built by tools/build.mjs from content/pieces.js. Edit that, 
 const slugs = new Set();
 for (const p of PIECES) {
     if (!/^[a-z0-9-]+$/.test(p.slug)) throw new Error(`slug "${p.slug}": lowercase letters, digits and dashes only`);
-    if (['index', 'pieces', '404'].includes(p.slug) || slugs.has(p.slug)) throw new Error(`slug "${p.slug}" is taken`);
+    if (['index', 'tracklist', '404'].includes(p.slug) || slugs.has(p.slug)) throw new Error(`slug "${p.slug}" is taken`);
     if (!fs.existsSync(path.join(ROOT, p.file))) throw new Error(`${p.slug}: no file at ${p.file}`);
     slugs.add(p.slug);
 }
 
-// A row that plays the piece on demand; js/vault.js drives it.
+// A piece's row. It plays only while the piece is on air; js/vault.js drives it.
 const row = (p, link) =>
-    `<div class="track" data-file="/${esc(p.file)}" data-duration="${p.duration}">` +
-    `<button type="button" class="track-play" aria-label="Play ${esc(p.title)}"><i></i></button>` +
+    `<div class="track" data-slug="${p.slug}">` +
+    `<button type="button" class="track-play" aria-label="Turn sound on" tabindex="-1"></button>` +
     `<div class="track-name">${link ? `<a class="track-title" href="/${p.slug}">${esc(p.title)}</a>` : `<span class="track-title">${esc(p.title)}</span>`}` +
     `<span class="track-sub label">${esc(p.artist)} · <span class="status">${esc(p.status)}</span>${link ? ` <span class="onair" data-onair="${p.slug}" hidden>On air</span>` : ''}</span></div>` +
-    `<span class="track-time label">0:00 / ${clock(p.duration)}</span>` +
+    `<span class="track-time label">${clock(p.duration)}</span>` +
     `<div class="track-bar" aria-hidden="true"><span></span></div></div>`;
 
 const head = (title, desc, extra = '') => `<!DOCTYPE html>
@@ -74,7 +74,7 @@ const corner = `<div class="corner">
 
 const exit = here => `<nav class="exit">
     <a href="/">Vault</a>
-    ${here === 'pieces' ? '<span class="here">Pieces</span>' : '<a href="/pieces">Pieces</a>'}<a href="https://audiospatials.com/">Audiospatials</a>
+    ${here === 'tracklist' ? '<span class="here">Tracklist</span>' : '<a href="/tracklist">Tracklist</a>'}<a href="https://audiospatials.com/">Audiospatials</a>
     <span class="spacer"></span>
     <span class="copy">&copy; 2026 Audiospatials</span>
 </nav>`;
@@ -98,7 +98,7 @@ for (const p of PIECES) {
 ${corner}
 <div class="wrap">
     <h1 class="piece" data-arrive>${esc(p.title)}</h1>
-    <p class="byline label">${esc(p.artist)} &nbsp;|&nbsp; <span class="status">${esc(p.status)}</span> <span class="onair" data-onair="${p.slug}" hidden>On air now</span></p>
+    <p class="byline label">${esc(p.artist)} &nbsp;|&nbsp; <span class="status">${esc(p.status)}</span> <span class="onair" data-onair="${p.slug}" hidden>On air now</span><span class="status" data-next="${p.slug}" hidden></span></p>
 ${p.note ? `    <div class="prose"><p>${esc(p.note)}</p></div>\n` : ''}
     <section>
         <div class="tracks">
@@ -124,6 +124,6 @@ for (const f of fs.readdirSync(ROOT)) {
 
 // ---------- the list
 
-const list = read('pieces.html');
-const block = `<!-- build:pieces -->\n${PIECES.map(p => '            ' + row(p, true)).join('\n')}\n<!-- /build:pieces -->`;
-write('pieces.html', list.replace(/<!-- build:pieces -->[\s\S]*?<!-- \/build:pieces -->/, block));
+const list = read('tracklist.html');
+const block = `<!-- build:tracklist -->\n${PIECES.map(p => '            ' + row(p, true)).join('\n')}\n<!-- /build:tracklist -->`;
+write('tracklist.html', list.replace(/<!-- build:tracklist -->[\s\S]*?<!-- \/build:tracklist -->/, block));

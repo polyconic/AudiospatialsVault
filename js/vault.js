@@ -1,17 +1,24 @@
-/* The stream and the players. Needs content/pieces.js loaded first.
+/* The stream. Needs content/pieces.js loaded first.
 
-   The stream: what's on air is a pure function of the wall clock, so everyone
-   hears the same moment. The pieces play end to end in an order reshuffled
-   each time through, seeded by the pass number so every browser agrees.
-   Pausing and playing again rejoins the stream live, like a radio.
+   What's on air is a pure function of the wall clock, so everyone hears the
+   same moment. The pieces play end to end in an order reshuffled each time
+   through, seeded by the pass number so every browser agrees. Nothing plays
+   on demand and there's no play button: the stream is running when you
+   arrive, and the only control is sound on / off.
 
-   Rows (.track[data-file]) play one piece on demand, from the start, and seek
-   when their line is clicked. One thing plays at a time across the page.
+   It always starts muted — Greg's call: people tune in if they want (and
+   browsers won't start sound without a tap anyway). A tap on a sound button
+   unmutes it, inside the tap, as Safari requires.
+
+   The sound buttons: .track.live on the front, and on the tracklist and piece
+   pages the row of whichever piece is on air (.track[data-slug]; the others
+   show no button). Every row's line fills with the stream.
 
    Timers are setInterval, not requestAnimationFrame: browsers stop rAF in
    background tabs, and the stream gets left running in one. */
 (function () {
     const n = PIECES.length;
+    if (!n) return;
     const total = PIECES.reduce((a, p) => a + p.duration, 0);
 
     function order(seed) {
@@ -41,134 +48,114 @@
         return { piece: PIECES[0], off: 0 };
     }
 
+    // Seconds until a piece next comes on air, walking the clock forward.
+    function untilNext(slug) {
+        const t = Date.now() / 1000 - VAULT.epoch;
+        let pass = Math.floor(t / total), at = pass * total - t;
+        for (let k = 0; k < 3; k++, pass++) {
+            for (const i of order(pass)) {
+                if (at > 0 && PIECES[i].slug === slug) return at;
+                at += PIECES[i].duration;
+            }
+        }
+        return null;
+    }
+    const soon = s => s < 90 ? 'in a minute' : s < 5400 ? `in ${Math.round(s / 60)} min` : `in ${Math.round(s / 3600)} hr`;
+
     const clock = s => {
         s = Math.max(0, Math.floor(s));
         return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
     };
-    const src = p => '/' + p.file;
 
-    const players = [];
-    const silenceOthers = me => players.forEach(p => p !== me && p.stop());
+    // ---------- the one audio element
 
-    // Marks whichever piece is on air, wherever it's listed.
-    function markOnAir() {
-        const slug = onAir().piece.slug;
-        document.querySelectorAll('[data-onair]').forEach(el => { el.hidden = el.dataset.onair !== slug; });
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audio.muted = true;
+    let current = null;
+
+    const tuneTo = (piece, off) => {
+        if (current !== piece) {
+            current = piece;
+            audio.src = '/' + piece.file;
+            if ('mediaSession' in navigator)
+                navigator.mediaSession.metadata = new MediaMetadata({ title: piece.title, artist: piece.artist, album: 'Audiospatials Vault' });
+        }
+        // Before its metadata arrives, a seek can be dropped; do it once it has.
+        if (audio.readyState >= 1) audio.currentTime = off;
+        else audio.addEventListener('loadedmetadata', () => { audio.currentTime = onAir().off; }, { once: true });
+    };
+
+    const start = () => audio.play().catch(() => {});
+
+    // Paused from outside (headphones, lock screen): the stream doesn't stop
+    // for anyone, so that means sound off; tick() picks it back up, muted.
+    audio.addEventListener('pause', () => { if (!audio.ended && !audio.muted) { audio.muted = true; render(); } });
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('pause', () => { audio.muted = true; render(); });
+        navigator.mediaSession.setActionHandler('play', () => { audio.muted = false; start(); render(); });
     }
-    if (n) { markOnAir(); setInterval(markOnAir, 1000); }
 
-    // ---------- the stream
+    const toggle = () => {
+        audio.muted = !audio.muted;
+        if (audio.paused) { const { piece, off } = onAir(); tuneTo(piece, off); audio.play().catch(() => {}); }
+        render();
+    };
 
+    // ---------- the controls
+
+    const ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9H6L11 4.5V19.5L6 15H2Z"/><path d="M14 8.2A5 5 0 0 1 14 15.8L15.1 17.2A6.8 6.8 0 0 0 15.1 6.8Z"/><path d="M16.6 5.1A9 9 0 0 1 16.6 18.9L17.8 20.3A10.8 10.8 0 0 0 17.8 3.7Z"/></svg>';
+    const OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9H6L11 4.5V19.5L6 15H2Z"/><path d="M14.3 9.4 15.4 8.3 17.5 10.4 19.6 8.3 20.7 9.4 18.6 11.5 20.7 13.6 19.6 14.7 17.5 12.6 15.4 14.7 14.3 13.6 16.4 11.5Z"/></svg>';
     const live = document.querySelector('.track.live');
-    if (live && n) {
-        const btn = live.querySelector('.track-play');
-        const title = live.querySelector('.track-title');
-        const sub = live.querySelector('.track-sub');
-        const time = live.querySelector('.track-time');
-        const fill = live.querySelector('.track-bar span');
-        const audio = new Audio();
-        audio.preload = 'metadata';
-        let current = null, on = false;
+    const rows = [...document.querySelectorAll('.track[data-slug]')];
+    const button = (btn, loud) => {
+        if (btn.dataset.loud !== String(loud)) { btn.innerHTML = loud ? ON : OFF; btn.dataset.loud = loud; }
+        btn.setAttribute('aria-label', loud ? 'Turn sound off' : 'Turn sound on');
+        btn.setAttribute('aria-pressed', String(loud));
+    };
+    [live, ...rows].forEach(r => r && r.querySelector('.track-play').addEventListener('click', toggle));
 
-        const tuneTo = (piece, off) => {
-            if (current !== piece) {
-                current = piece;
-                audio.src = src(piece);
-                if ('mediaSession' in navigator)
-                    navigator.mediaSession.metadata = new MediaMetadata({ title: piece.title, artist: piece.artist, album: 'Audiospatials Vault' });
-            }
-            // Before its metadata arrives, a seek can be dropped; do it once it has.
-            if (audio.readyState >= 1) audio.currentTime = off;
-            else audio.addEventListener('loadedmetadata', () => { audio.currentTime = onAir().off; }, { once: true });
-        };
+    function render() {
+        const { piece, off } = onAir();
+        const loud = !audio.paused && !audio.muted;
+        const at = `scaleX(${off / piece.duration})`;
 
-        const show = () => {
-            const { piece, off } = onAir();
+        if (live) {
+            const title = live.querySelector('.track-title');
             title.textContent = piece.title;
             title.href = '/' + piece.slug;
-            sub.textContent = piece.artist + ' · ' + piece.status;
-            time.textContent = clock(off) + ' / ' + clock(piece.duration);
-            fill.style.transform = `scaleX(${off / piece.duration})`;
-            if (!on) { if (current !== piece) tuneTo(piece, off); return; }
-            if (current !== piece) { tuneTo(piece, off); audio.play().catch(() => {}); }
-            else if (audio.readyState >= 1 && Math.abs(audio.currentTime - off) > 3) audio.currentTime = off;
-        };
-
-        const state = s => {
-            live.dataset.state = s;
-            btn.setAttribute('aria-label', s === 'playing' ? 'Stop the stream' : 'Play the stream');
-        };
-        const player = {
-            stop() { if (!on) return; on = false; audio.pause(); state('idle'); },
-        };
-        players.push(player);
-
-        // Play inside the tap itself: Safari refuses sound started any later.
-        btn.addEventListener('click', () => {
-            if (on) return player.stop();
-            silenceOthers(player);
-            on = true;
-            const { piece, off } = onAir();
-            tuneTo(piece, off);
-            state('playing');
-            audio.play().catch(() => player.stop());
+            live.querySelector('.track-sub').textContent = piece.artist + ' · ' + piece.status;
+            live.querySelector('.track-time').textContent = clock(off) + ' / ' + clock(piece.duration);
+            live.querySelector('.track-bar span').style.transform = at;
+            live.dataset.state = loud ? 'playing' : 'idle';
+            button(live.querySelector('.track-play'), loud);
+        }
+        rows.forEach(r => {
+            const p = PIECES.find(x => x.slug === r.dataset.slug);
+            const air = p === piece;
+            r.classList.toggle('on-air', air);
+            r.dataset.state = air && loud ? 'playing' : 'idle';
+            r.querySelector('.track-play').tabIndex = air ? 0 : -1;
+            button(r.querySelector('.track-play'), air && loud);
+            r.querySelector('.track-time').textContent = air ? clock(off) + ' / ' + clock(p.duration) : clock(p.duration);
+            r.querySelector('.track-bar span').style.transform = air ? at : 'scaleX(0)';
         });
-        // Paused from outside the page (headphones, lock screen): show it. The
-        // paused check skips the late event from our own stop and replay.
-        audio.addEventListener('pause', () => { if (on && audio.paused && !audio.ended) player.stop(); });
-
-        state('idle');
-        show();
-        setInterval(show, 500);
+        document.querySelectorAll('[data-onair]').forEach(el => { el.hidden = el.dataset.onair !== piece.slug; });
+        document.querySelectorAll('[data-next]').forEach(el => {
+            const air = el.dataset.next === piece.slug, wait = air ? 0 : untilNext(el.dataset.next);
+            el.hidden = air || wait == null;
+            if (!el.hidden) el.textContent = 'On air next ' + soon(wait);
+        });
     }
 
-    // ---------- pieces on demand
+    function tick() {
+        const { piece, off } = onAir();
+        if (current !== piece) { tuneTo(piece, off); start(); }
+        else if (audio.readyState >= 1 && Math.abs(audio.currentTime - off) > 3) audio.currentTime = off;
+        else if (audio.paused && !audio.ended) start();
+        render();
+    }
 
-    document.querySelectorAll('.track[data-file]').forEach(row => {
-        const btn = row.querySelector('.track-play');
-        const time = row.querySelector('.track-time');
-        const fill = row.querySelector('.track-bar span');
-        const bar = row.querySelector('.track-bar');
-        const name = row.querySelector('.track-title').textContent;
-        const dur = +row.dataset.duration;
-        let audio = null;
-
-        const state = s => {
-            row.dataset.state = s;
-            btn.setAttribute('aria-label', (s === 'playing' ? 'Pause ' : 'Play ') + name);
-        };
-        const show = () => {
-            const at = audio ? audio.currentTime : 0;
-            time.textContent = clock(at) + ' / ' + clock(dur);
-            fill.style.transform = `scaleX(${Math.min(1, at / dur)})`;
-        };
-        const load = () => {
-            if (audio) return audio;
-            audio = new Audio(row.dataset.file);
-            audio.addEventListener('play', () => state('playing'));
-            audio.addEventListener('pause', () => state('paused'));
-            audio.addEventListener('ended', () => { audio.currentTime = 0; state('idle'); show(); });
-            audio.addEventListener('timeupdate', show);
-            return audio;
-        };
-        const player = { stop() { if (audio && !audio.paused) audio.pause(); } };
-        players.push(player);
-
-        btn.addEventListener('click', () => {
-            const a = load();
-            if (!a.paused) return a.pause();
-            silenceOthers(player);
-            a.play().catch(() => state('idle'));
-        });
-        bar.addEventListener('click', e => {
-            const a = load();
-            const r = bar.getBoundingClientRect();
-            a.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * dur;
-            show();
-            if (a.paused) { silenceOthers(player); a.play().catch(() => state('idle')); }
-        });
-
-        state('idle');
-        show();
-    });
+    tick();
+    setInterval(tick, 500);
 })();
