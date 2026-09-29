@@ -76,6 +76,16 @@ paused under reduced motion. Source: `~/Desktop/3P6A5630.MOV` (4K MJPEG,
 - The name over it is plain white (a difference blend turned text bronze
   over the blue). `.shade` darkens the bottom for the player.
 
+## Link previews
+
+Every vault page's `og:image` is `assets/share/vault.jpg` (1200×630, JPG
+because iMessage won't show webp): the geo-alphabet VAULT in white on
+#0a0a0a with a small grey AUDIOSPATIALS above, as the front page looked
+before the video. Only vault links use it; audiospatials.com keeps its own
+wordmark image. It was drawn in the browser with `Geo.layout('VAULT')` and
+Path2D at 2× then scaled down (ImageMagick's SVG renderer facets the U's
+curve). The build writes the tags into each piece page.
+
 ## Shared with audiospatials.com
 
 `css/base.css`, `css/pages.css`, `js/geo.js`, `js/nav.js`, `js/menu.js` and

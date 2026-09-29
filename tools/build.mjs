@@ -60,6 +60,14 @@ ${BUILT}
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
     <meta name="description" content="${desc}">
+    <meta property="og:title" content="${title.replace(' &mdash; ', ' — ')}">
+    <meta property="og:description" content="${desc}">
+    <meta property="og:image" content="${SITE}/assets/share/vault.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="music.song">
+    <meta property="og:url" content="${SITE}${url}">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="#0a0a0a">
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/pages.css">
