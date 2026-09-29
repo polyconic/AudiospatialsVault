@@ -74,12 +74,17 @@ a.row:focus-visible .u { color: var(--sig); }
                   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
 .tiles.centered > .tile { width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); }
 @media (max-width: 1000px) { .tiles.centered { --cols: 2; } }
-@media (max-width: 480px)  { .tiles.centered { --cols: 1; } }
+/* One to a row on a phone: more room under each name, so it reads as the
+   caption of the photo above, not the one below. */
+@media (max-width: 480px)  { .tiles.centered { --cols: 1; row-gap: 40px; } }
 
 /* Artist pages: the photo beside the words, stacked on a phone. */
 .artist-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
               gap: clamp(24px, 5vw, 80px); align-items: start; margin-top: clamp(26px, 5vh, 54px); }
 .artist-photo img, .artist-photo video { display: block; width: 100%; height: auto; background: var(--rule); }
+/* A short bio sits level with the middle of the photo rather than floating
+   at its top; a bio taller than the photo fills the row as before. */
+.artist-text { align-self: center; }
 .artist-text .lede { margin-top: 0; }
 .artist-text .prose { margin-top: 0; }
 .artist-text .lede + .prose { margin-top: clamp(22px, 4vh, 40px); }
@@ -204,39 +209,40 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .listen-here .label:first-child { display: block; margin-bottom: 14px; }
 .listen-here .tracks { margin-bottom: 0; }
 
-/* SoundCloud tracks: our own rows, no box. Hairlines like the other lists,
-   an outlined play button, and a hairline that fills red as it plays. */
+/* SoundCloud tracks: our own rows. No rules between them, room instead
+   (2026-09-29: the hairlines read clinical); a soft round button that turns
+   solid white while playing; a short rounded line under the title that
+   fills red and seeks. */
 .tracks { max-width: 760px; margin-bottom: clamp(14px, 2vw, 22px); }
-.track { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
-         column-gap: 16px; padding: 16px 0 0; border-top: 1px solid var(--rule); }
-.track:last-child { border-bottom: 1px solid var(--rule); }
-.track-play { appearance: none; width: 40px; height: 40px; border-radius: 50%; padding: 0;
-              border: 1px solid var(--faint); background: transparent; color: var(--fg);
+.track { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto;
+         align-items: center; column-gap: 18px; row-gap: 9px; }
+.track + .track { margin-top: 26px; }
+.track-play { grid-row: 1 / span 2; appearance: none; width: 46px; height: 46px; border-radius: 50%; padding: 0;
+              border: 0; background: rgba(242, 242, 239, 0.08); color: var(--fg);
               display: grid; place-items: center; cursor: pointer;
-              transition: border-color 0.2s, color 0.2s, background 0.2s; }
+              transition: background 0.2s, color 0.2s; }
 .track-play i { width: 11px; height: 13px; margin-left: 3px; background: currentColor;
                 clip-path: polygon(0 0, 100% 50%, 0 100%); }
 /* Pause: two bars, the second a shadow of the first. */
 .track[data-state="playing"] .track-play i { width: 4px; height: 12px; margin-left: 0; clip-path: none;
                                              box-shadow: 6px 0 0 currentColor; transform: translateX(-3px); }
-.track[data-state="loading"] .track-play { border-color: var(--dim); }
 .track[data-state="loading"] .track-play i { opacity: 0.4; }
-.track-play:focus-visible { border-color: var(--sig); color: var(--sig); }
-@media (hover: hover) { .track-play:hover { border-color: var(--sig); color: var(--sig); } }
-.track[data-state="playing"] .track-play { border-color: var(--fg); }
-.track-name { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.track-title { font-size: 15px; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track-play:focus-visible { color: var(--sig); }
+@media (hover: hover) { .track-play:hover { background: rgba(242, 242, 239, 0.15); } }
+.track[data-state="playing"] .track-play { background: var(--fg); color: var(--bg); }
+.track-name { grid-column: 2; align-self: end; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.track-title { font-size: 16px; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .track[data-state="playing"] .track-title { color: var(--sig); }
-.track-time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.track-time { grid-column: 3; align-self: end; white-space: nowrap; font-variant-numeric: tabular-nums; }
 /* The way out to SoundCloud, always there under the title, with the site's small arrow. */
 .track-sub a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
 .track-sub a::after { content: ""; display: inline-block; width: 0.5em; height: 0.5em; margin-left: 0.6em;
                       vertical-align: 0.22em; background: currentColor; clip-path: polygon(0 0, 100% 0, 100% 100%); }
 .track-sub a:focus-visible { color: var(--sig); }
 @media (hover: hover) { .track-sub a:hover { color: var(--sig); } }
-.track-bar { grid-column: 1 / -1; height: 17px; margin-top: 6px; position: relative; cursor: pointer; }
-.track-bar::before, .track-bar span { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; }
-.track-bar::before { background: var(--rule); }
+.track-bar { grid-column: 2 / -1; align-self: start; height: 12px; position: relative; cursor: pointer; }
+.track-bar::before, .track-bar span { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 2px; border-radius: 2px; }
+.track-bar::before { background: rgba(242, 242, 239, 0.1); }
 .track-bar span { background: var(--sig); transform: scaleX(0); transform-origin: left; transition: transform 0.25s linear; }
 .track[data-state="idle"] .track-bar { cursor: default; }
 /* The service's own player: out of sight while it plays for us, shown only
