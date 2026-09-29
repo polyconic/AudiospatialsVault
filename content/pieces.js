@@ -21,7 +21,7 @@ const PIECES = [
     {
         slug: 'dream-state',
         title: 'dream state',
-        artist: 'Gregor Egan',
+        artist: 'Gregor Egan & Hunter Bowersmith',
         status: 'sketch',
         file: 'audio/dream-state.m4a',
         duration: 203.52,
