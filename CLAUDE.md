@@ -21,7 +21,7 @@ each piece page). Don't bring comments back without asking.
 encode it to `audio/` (AAC in .m4a, as the two there), add an entry with an
 **accurate `duration` in seconds** (the stream's clock is built on it —
 `ffprobe -v error -show_entries format=duration -of csv=p=0 file`), then
-`node tools/build.mjs` and commit what it writes. Masters stay out of git:
+`node tools/build.mjs`, then `zsh tools/tag.sh` (writes each track's credits into its file: title, artist, album "Audiospatials Vault", © Audiospatials, its page; no re-encode, so a downloaded track says what it is), and commit what they write. Published files carry no camera, date or location data: encodes strip it (`-map_metadata -1`), and the credits are the only tags. Masters stay out of git:
 `tracks/` is ignored.
 
 The build writes `<slug>.html` per piece (whole; removes pages of pieces no
