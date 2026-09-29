@@ -63,6 +63,9 @@
 </video>
 <div class="shade"></div>
 
+<a class="backmark" href="https://audiospatials.com/" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12 12 4.5V10H21V14H12V19.5Z"/></svg></a>
+<a class="homemark" href="https://audiospatials.com/" aria-label="Audiospatials"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 11.5H19V21H13.8V15H10.2V21H5V11.5H2Z"/></svg></a>
+
 <p class="kicker label">Audiospatials</p>
 <a class="mark" href="/tracklist" aria-label="Vault: the tracklist">VAULT</a>
 <canvas class="geo" id="geo" aria-hidden="true"></canvas>
@@ -79,6 +82,16 @@
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const v = document.querySelector('.bg'); v.removeAttribute('autoplay'); v.pause();
     }
+</script>
+<script>
+    // The vault's front is where people land from audiospatials.com, so its
+    // marks lead back there: the arrow goes back a page if they came from
+    // the studio site, home goes to its front.
+    document.querySelector('.backmark').addEventListener('click', e => {
+        let from = '';
+        try { from = new URL(document.referrer).hostname; } catch (err) {}
+        if (/(^|\.)audiospatials\.com$/.test(from) && history.length > 1) { e.preventDefault(); history.back(); }
+    });
 </script>
 <script src="/content/pieces.js"></script>
 <script src="/js/geo.js"></script>
