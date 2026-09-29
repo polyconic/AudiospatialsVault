@@ -83,7 +83,11 @@ paused under reduced motion. Source: `~/Desktop/3P6A5630.MOV` (4K MJPEG,
 over. **One difference:** here `geo.js`'s `arrive` keeps each word's letters
 together, so long titles wrap at spaces rather than between any two letters
 ("MASTE / R 1" on a piece page). Audiospatials doesn't have that yet.
-Vault-only styles are in `css/vault.css`.
+Vault-only styles are in `css/vault.css`. **Also different: `nav.js`'s back
+arrow** goes wherever the visitor came from, even another site (Greg,
+2026-09-29), where the studio sites only go back within themselves. The
+front page has back and home too (the studio sites' fronts have none): back
+the same way, falling back to audiospatials.com; home to audiospatials.com.
 
 The front page's VAULT wordmark is drawn by `Geo.converge` like the main
 sites', but **still and all white** (Greg, 2026-09-27): `{ still: true, dim:

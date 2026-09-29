@@ -84,13 +84,11 @@
     }
 </script>
 <script>
-    // The vault's front is where people land from audiospatials.com, so its
-    // marks lead back there: the arrow goes back a page if they came from
-    // the studio site, home goes to its front.
+    // Back goes wherever the visitor came from, the studio site or anywhere
+    // else (Greg, 2026-09-29). Opened fresh, with nowhere to go back to, it
+    // goes to audiospatials.com; home always does.
     document.querySelector('.backmark').addEventListener('click', e => {
-        let from = '';
-        try { from = new URL(document.referrer).hostname; } catch (err) {}
-        if (/(^|\.)audiospatials\.com$/.test(from) && history.length > 1) { e.preventDefault(); history.back(); }
+        if (document.referrer && history.length > 1) { e.preventDefault(); history.back(); }
     });
 </script>
 <script src="/content/pieces.js"></script>
