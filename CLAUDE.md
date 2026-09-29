@@ -79,12 +79,11 @@ paused under reduced motion. Source: `~/Desktop/3P6A5630.MOV` (4K MJPEG,
 ## Link previews
 
 Every vault page's `og:image` is `assets/share/vault.jpg` (1200×630, JPG
-because iMessage won't show webp): the geo-alphabet VAULT in white on
-#0a0a0a with a small grey AUDIOSPATIALS above, as the front page looked
-before the video. Only vault links use it; audiospatials.com keeps its own
-wordmark image. It was drawn in the browser with `Geo.layout('VAULT')` and
-Path2D at 2× then scaled down (ImageMagick's SVG renderer facets the U's
-curve). The build writes the tags into each piece page.
+because iMessage won't show webp): Greg's dot-matrix VAULT on near-black
+(2026-09-29), made from his `assets/share/vault.png` (2500×1313, same
+proportions) with a Lanczos resize. Only vault links use it; audiospatials.com
+keeps its own wordmark image. The build writes the tags into each piece page.
+(Before that it was the geo-alphabet VAULT drawn from `Geo.layout`.)
 
 ## Shared with audiospatials.com
 
