@@ -111,9 +111,8 @@ Claude commits locally and stops. No co-author trailer.
 record, `vault` → `polyconic.github.io.`. Add only that — **never touch the
 domain's MX or TXT records**, they carry @audiospatials.com mail.
 
-**Unlisted, not private (Greg's choice, 2026-09-27).** Until launch every page
-carries `noindex, nofollow` (the build's template too), `robots.txt`
-disallows everything, and nothing on audiospatials.com links here. The repo is
-public, so anyone can find the audio. **Launch** = drop the robots meta from
-`index.html`, `tracklist.html`, `404.html` and the build's `head()`, delete
-`robots.txt`, rebuild, and link the vault from the main site.
+**Public and in search since 2026-09-29.** Linked from audiospatials.com
+(menu, between Studio and About; Music's "Check the Vault"). Every page has a
+canonical; the build writes `sitemap.xml`, which `robots.txt` points to. Only
+`404.html` stays `noindex`. It was unlisted (noindex + robots.txt Disallow)
+from 2026-09-27 until then.

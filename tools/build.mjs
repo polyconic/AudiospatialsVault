@@ -5,6 +5,7 @@
    - <slug>.html     one page per piece, whole (and removes pages of pieces no
                      longer listed; a built page says so on its second line)
    - tracklist.html  the list, between <!-- build:tracklist --> markers
+   - sitemap.xml
 
    Run it after changing content/, and commit what it writes. */
 
@@ -47,21 +48,22 @@ const row = (p, link) =>
     `<span class="track-time label">${clock(p.duration)}</span>` +
     `<div class="track-bar" aria-hidden="true"><span></span></div></div>`;
 
-const head = (title, desc, extra = '') => `<!DOCTYPE html>
+const SITE = 'https://vault.audiospatials.com';
+const head = (title, desc, url) => `<!DOCTYPE html>
 ${BUILT}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="robots" content="noindex, nofollow">
     <title>${title}</title>
+    <link rel="canonical" href="${SITE}${url}">
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
     <meta name="description" content="${desc}">
     <meta name="theme-color" content="#0a0a0a">
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/pages.css">
-    <link rel="stylesheet" href="/css/vault.css">${extra}
+    <link rel="stylesheet" href="/css/vault.css">
 </head>`;
 
 const corner = `<div class="corner">
@@ -93,7 +95,7 @@ if (location.pathname.endsWith('.html')) history.replaceState(history.state, '',
 for (const p of PIECES) {
     const desc = esc(`${p.title} by ${p.artist}, ${p.status}. In the Audiospatials Vault.`);
     const mail = `mailto:${VAULT.email}?subject=${encodeURIComponent('Vault: ' + p.title)}`;
-    write(p.slug + '.html', `${head(`${esc(p.title)} &mdash; Audiospatials Vault`, desc)}
+    write(p.slug + '.html', `${head(`${esc(p.title)} &mdash; Audiospatials Vault`, desc, '/' + p.slug)}
 <body>
 ${corner}
 <div class="wrap">
@@ -127,3 +129,11 @@ for (const f of fs.readdirSync(ROOT)) {
 const list = read('tracklist.html');
 const block = `<!-- build:tracklist -->\n${PIECES.map(p => '            ' + row(p, true)).join('\n')}\n<!-- /build:tracklist -->`;
 write('tracklist.html', list.replace(/<!-- build:tracklist -->[\s\S]*?<!-- \/build:tracklist -->/, block));
+
+// ---------- sitemap
+
+write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${['/', '/tracklist', ...PIECES.map(p => '/' + p.slug)].map(u => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}
+</urlset>
+`);
