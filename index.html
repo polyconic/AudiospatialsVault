@@ -16,6 +16,14 @@
         html, body { height: 100%; width: 100%; overflow: hidden; }
         body { background: var(--bg); position: relative; }
 
+        /* Clouds over a peak behind the trees, looping for everyone (muted; the
+           stream is the sound). A tall cut from the 4K original for phones. */
+        .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+              z-index: 0; pointer-events: none; }
+        /* Keeps the words at the bottom readable over the lighter frames. */
+        .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+                 background: linear-gradient(to bottom, rgba(10,10,10,0.15), rgba(10,10,10,0) 40%, rgba(10,10,10,0.55)); }
+
         /* The wordmark, drawn by geo.js over the link's own text, which stays
            as the hit area and for readers. It leads to the list. Five letters
            against the main sites' thirteen, so it's set larger to carry the same weight.
@@ -49,6 +57,12 @@
 </a>
 </div>
 
+<video class="bg" autoplay muted loop playsinline preload="auto" poster="/video/clouds.jpg" aria-hidden="true">
+    <source src="/video/clouds-tall.mp4" type="video/mp4" media="(max-aspect-ratio: 4/5)">
+    <source src="/video/clouds.mp4" type="video/mp4">
+</video>
+<div class="shade"></div>
+
 <p class="kicker label">Audiospatials</p>
 <a class="mark" href="/tracklist" aria-label="Vault: the tracklist">VAULT</a>
 <canvas class="geo" id="geo" aria-hidden="true"></canvas>
@@ -61,6 +75,11 @@
     <nav class="label"><a href="/tracklist">Tracklist</a><a href="https://audiospatials.com/">Audiospatials</a></nav>
 </div>
 
+<script>
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const v = document.querySelector('.bg'); v.removeAttribute('autoplay'); v.pause();
+    }
+</script>
 <script src="/content/pieces.js"></script>
 <script src="/js/geo.js"></script>
 <script src="/js/vault.js"></script>

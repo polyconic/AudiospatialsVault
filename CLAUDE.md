@@ -59,6 +59,23 @@ A slug is a page address: keep it once the page has been shared.
   second to sound. Muting keeps it running silently for 60s (`GRACE`), so
   tuning back in is instant, then drops the source.
 
+## The front page's video (2026-09-29)
+
+Behind VAULT: `video/clouds.mp4` (1920 wide) and, for screens taller than
+4:5, `video/clouds-tall.mp4` (1080×1920, cut from the 4K frame so phones get
+full sharpness). About 13.5 MB each; a visitor loads only one. Muted, looping,
+paused under reduced motion. Source: `~/Desktop/3P6A5630.MOV` (4K MJPEG,
+3.9 GB, not committed). How they were made, for the next one:
+- 60.5s of source, the last 4s cross-faded into the start so the loop has
+  no seam (56.5s).
+- Dusk footage full of sensor grain, which is what made the first encodes
+  100 MB and 248 MB. `hqdn3d` (for the tall cut, once at full res before
+  scaling and again after) plus `curves=all='0/0 0.08/0 1/1'` to sink the
+  trees' blacks brought them to ~13 MB at the same sharpness; x264 slow,
+  CRF 22 (wide) / 24 (tall), `+faststart`. The curve also deepens the sky.
+- VAULT stays plain white over it (a difference blend turned it bronze
+  over the blue). `.shade` darkens the bottom for the player.
+
 ## Shared with audiospatials.com
 
 `css/base.css`, `css/pages.css`, `js/geo.js`, `js/nav.js`, `js/menu.js` and
