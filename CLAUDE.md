@@ -73,7 +73,7 @@ paused under reduced motion. Source: `~/Desktop/3P6A5630.MOV` (4K MJPEG,
   scaling and again after) plus `curves=all='0/0 0.08/0 1/1'` to sink the
   trees' blacks brought them to ~13 MB at the same sharpness; x264 slow,
   CRF 22 (wide) / 24 (tall), `+faststart`. The curve also deepens the sky.
-- VAULT stays plain white over it (a difference blend turned it bronze
+- The name over it is plain white (a difference blend turned text bronze
   over the blue). `.shade` darkens the bottom for the player.
 
 ## Shared with audiospatials.com
@@ -89,11 +89,10 @@ arrow** goes wherever the visitor came from, even another site (Greg,
 front page has back and home too (the studio sites' fronts have none): back
 the same way, falling back to audiospatials.com; home to audiospatials.com.
 
-The front page's VAULT wordmark is drawn by `Geo.converge` like the main
-sites', but **still and all white** (Greg, 2026-09-27): `{ still: true, dim:
-ink }`. `opts.still` is a vault-only addition to `geo.js` that draws the word
-once, assembled. It's set larger (`12vw` against their `7vw`) because it's
-five letters, not thirteen.
+The front page has **no wordmark** since 2026-09-29: over the video a big VAULT
+was too distracting (Greg), so the name is one small white label line,
+"Audiospatials Vault", at 42% height. (It was a still, all-white
+`Geo.converge` VAULT; `opts.still` in `geo.js` is left over from it.)
 
 - **Hover styles go inside `@media (hover: hover)`** (2026-09-27). On iOS a tap
   on anything with a :hover style is spent showing the hover, so the menu
