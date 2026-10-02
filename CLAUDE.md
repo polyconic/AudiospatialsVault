@@ -29,6 +29,8 @@ longer listed) and the list in `tracklist.html` between its build markers.
 `index.html` and the rest of `tracklist.html` are hand-written. The browser also
 loads `content/pieces.js` directly, for the stream.
 
+Titles are written in capitals (Greg, 2026-10-02: "capitalize everything"); artists in proper case. New pieces default to status `unreleased`. A track already in AAC is stream-copied into `audio/` (no quality loss); WAV and MP3 are encoded to 256 kbps AAC. Don't ship a VBR MP3: without a seek table the stream's jump to the live position is inexact.
+
 A slug is a page address: keep it once the page has been shared.
 
 ## The stream (`js/vault.js`)
