@@ -205,8 +205,8 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 @keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
 
 /* SoundCloud under an artist's bio. */
-.listen-here { margin-top: clamp(30px, 5vh, 50px); }
-.listen-here .label:first-child { display: block; margin-bottom: 14px; }
+.listen-here, .elsewhere { margin-top: clamp(30px, 5vh, 50px); }
+.listen-here .label:first-child, .elsewhere .label:first-child { display: block; margin-bottom: 14px; }
 .listen-here .tracks { margin-bottom: 0; }
 
 /* SoundCloud tracks: our own rows. No rules between them, room instead
