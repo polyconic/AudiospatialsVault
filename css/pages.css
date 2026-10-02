@@ -101,6 +101,13 @@ a.row:focus-visible .u { color: var(--sig); }
 /* Photos further down a page keep their own shape. */
 .photos { columns: 2; column-gap: clamp(14px, 2vw, 28px); margin-top: clamp(24px, 5vh, 54px); }
 @media (max-width: 620px) { .photos { columns: 1; } }
+/* stack: two columns, the first photo alone at the left and the rest stacked
+   at the right, each column centered against the other (Canary). */
+.photos.stack { --g: clamp(14px, 2vw, 28px); columns: auto; display: flex; align-items: center; gap: var(--g); }
+.photos.stack > * { flex: 1 1 0; min-width: 0; }
+.photos.stack .side { display: flex; flex-direction: column; gap: var(--g); }
+.photos.stack img, .photos.stack .clip { margin-bottom: 0; }
+@media (max-width: 620px) { .photos.stack { flex-direction: column; align-items: stretch; } }
 /* Looping clips, among the photos or as an artist's main asset, with a
    sound button in the corner. */
 .clip { position: relative; }
