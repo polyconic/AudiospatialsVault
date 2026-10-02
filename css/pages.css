@@ -101,13 +101,18 @@ a.row:focus-visible .u { color: var(--sig); }
 /* Photos further down a page keep their own shape. */
 .photos { columns: 2; column-gap: clamp(14px, 2vw, 28px); margin-top: clamp(24px, 5vh, 54px); }
 @media (max-width: 620px) { .photos { columns: 1; } }
-/* stack: two columns, the first photo alone at the left and the rest stacked
-   at the right, each column centered against the other (Canary). */
-.photos.stack { --g: clamp(14px, 2vw, 28px); columns: auto; display: flex; align-items: center; gap: var(--g); }
-.photos.stack > * { flex: 1 1 0; min-width: 0; }
-.photos.stack .side { display: flex; flex-direction: column; gap: var(--g); }
-.photos.stack img, .photos.stack .clip { margin-bottom: 0; }
-@media (max-width: 620px) { .photos.stack { flex-direction: column; align-items: stretch; } }
+/* Galleries are two columns, each centered against the other, so a short
+   column sits level with the middle of a tall one rather than hanging from its
+   top. The build deals the photos out to the shorter column in turn; a phone
+   shows them one at a time, in the order written (--i). */
+.photos.cols { --g: clamp(14px, 2vw, 28px); columns: auto; display: flex; align-items: center; gap: var(--g); }
+.photos.cols > .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--g); }
+.photos.cols img, .photos.cols .clip { margin-bottom: 0; }
+@media (max-width: 620px) {
+    .photos.cols { flex-direction: column; align-items: stretch; }
+    .photos.cols > .col { display: contents; }
+    .photos.cols .col > * { order: var(--i); }
+}
 /* Looping clips, among the photos or as an artist's main asset, with a
    sound button in the corner. */
 .clip { position: relative; }
