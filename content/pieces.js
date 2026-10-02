@@ -84,7 +84,7 @@ const PIECES = [
     {
         slug: 'in-the-garden',
         title: 'IN THE GARDEN',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/in-the-garden.m4a',
         duration: 202.47,
@@ -93,7 +93,7 @@ const PIECES = [
     {
         slug: 'the-night-she-left-me',
         title: 'THE NIGHT SHE LEFT ME',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/the-night-she-left-me.m4a',
         duration: 151.53,
@@ -102,7 +102,7 @@ const PIECES = [
     {
         slug: 'daywalk-1-1',
         title: 'DAYWALK 1.1',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/daywalk-1-1.m4a',
         duration: 176.66,
@@ -111,7 +111,7 @@ const PIECES = [
     {
         slug: 'really',
         title: 'REALLY!',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/really.m4a',
         duration: 308.57,
@@ -120,7 +120,7 @@ const PIECES = [
     {
         slug: 'soar',
         title: 'SOAR',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/soar.m4a',
         duration: 113.32,
@@ -129,7 +129,7 @@ const PIECES = [
     {
         slug: 'set-me-free',
         title: 'SET ME FREE',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/set-me-free.m4a',
         duration: 157.03,
@@ -138,7 +138,7 @@ const PIECES = [
     {
         slug: 'tide-swing',
         title: 'TIDE SWING',
-        artist: 'Hunter Bowersmith',
+        artist: 'FENNEC',
         status: 'unreleased',
         file: 'audio/tide-swing.m4a',
         duration: 187.95,
@@ -146,7 +146,7 @@ const PIECES = [
     },
     {
         slug: 'cnry-groove-1-demo',
-        title: 'CNRY - GROOVE 1 DEMO',
+        title: 'GROOVE 1',
         artist: 'Canary',
         status: 'unreleased',
         file: 'audio/cnry-groove-1-demo.m4a',
