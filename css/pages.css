@@ -85,7 +85,9 @@ a.row:focus-visible .u { color: var(--sig); }
 /* A short bio sits level with the middle of the photo rather than floating
    at its top; a bio taller than the photo fills the row as before. */
 .artist-text { align-self: center; }
-.artist-text .lede { margin-top: 0; }
+.artist-text { container-type: inline-size; }
+/* A tagline stays on one line: it shrinks with its column instead of wrapping. */
+.artist-text .lede { margin-top: 0; max-width: none; white-space: nowrap; font-size: min(clamp(19px, 2.4vw, 30px), 5.6cqw); }
 .artist-text .prose { margin-top: 0; }
 .artist-text .lede + .prose { margin-top: clamp(22px, 4vh, 40px); }
 /* wide: a clip as the main asset runs the full width, the words under it. */
