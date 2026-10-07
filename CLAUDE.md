@@ -105,6 +105,7 @@ was too distracting (Greg), so the name is one small white label line,
 "Audiospatials Vault", at 42% height. (It was a still, all-white
 `Geo.converge` VAULT; `opts.still` in `geo.js` is left over from it.)
 
+- **The nav is at the top, the © closes the page** (copied from audiospatials, 2026-10-07; see its CLAUDE.md).
 - **Hover styles go inside `@media (hover: hover)`** (2026-09-27). On iOS a tap
   on anything with a :hover style is spent showing the hover, so the menu
   took two taps. Keep `:focus-visible` outside it, for keyboards.

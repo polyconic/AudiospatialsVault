@@ -72,6 +72,7 @@ a.row:focus-visible .u { color: var(--sig); }
    wrap) so five tiles across are not small. */
 body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px, 3.5vw, 56px); }
 .roster .wrap { max-width: 1760px; }
+@media (min-width: 761px) { body.roster { padding-bottom: 20px; } .roster .footcopy { margin-top: 36px; } }
 
 /* The Artists grid centres an unfinished last row: a wrapping row of fixed
    fifths (halves, wholes) instead of grid tracks, same sizes and gaps. Ten
@@ -188,18 +189,22 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .rows.plain .u { text-transform: none; letter-spacing: 0; font-size: 14px; line-height: 1.5;
                  max-width: 44ch; }
 
-/* The exit bar: sections centred, the copyright at the right edge.
-   base.css keeps the Visuospatials layout; this overrides it here only. */
-.exit { justify-content: center; text-align: center; }
-.exit .spacer { display: none; }
-.exit .copy { position: absolute; right: max(20px, env(safe-area-inset-right, 0px)); }
-/* Too narrow to keep clear of the centred links: it follows them instead. */
-@media (max-width: 1000px) { .exit .copy { position: static; } }
+/* The exit bar at the top, between the corner marks, sections centred; the
+   copyright closes the page, centred (.footcopy, made by js/menu.js).
+   base.css keeps the Visuospatials layout (bar at the bottom); this overrides
+   it here only. */
+.exit { top: 0; bottom: auto; justify-content: center; text-align: center;
+        padding: calc(19px + env(safe-area-inset-top, 0px)) 20px 17px;
+        border-top: 0; border-bottom: 1px solid var(--rule); }
+.exit::after { display: none; }
+.exit .spacer, .exit .copy { display: none; }
+@media (min-width: 761px) { body { padding-top: clamp(80px, 9vh, 100px); padding-bottom: 50px; } }
+.footcopy { display: block; max-width: 1180px; margin: clamp(50px, 10vh, 90px) auto 0;
+            font-size: 10px; text-align: center; }
 
 /* Phones: no bottom bar. The same links drop down from the two-bar button in
    the top right (js/menu.js), under the corner marks. */
 .menumark { display: none !important; }
-.footcopy { display: none; }
 @media (max-width: 760px) {
     .menumark { display: grid !important; }
     body { padding-bottom: 70px; }
@@ -224,8 +229,6 @@ section:has(> .tiles.cube) > .label { text-align: center; }
     }
     html.menu-open .exit::after { display: none; }
     html.menu-open .exit .copy { display: none; }
-    .footcopy { display: block; max-width: 1180px; margin: clamp(50px, 10vh, 90px) auto 0;
-                font-size: 10px; text-align: center; }
 }
 @keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
 
