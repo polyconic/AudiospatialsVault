@@ -116,7 +116,7 @@ body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px,
    shows them one at a time, in the order written (--i). */
 .photos.cols { --g: clamp(14px, 2vw, 28px); columns: auto; display: flex; align-items: center; gap: var(--g); }
 .photos.cols > .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--g); }
-.photos.cols img, .photos.cols .clip { margin-bottom: 0; }
+.photos.cols img, .photos.cols .clip, .photos.cols figure { margin-bottom: 0; }
 @media (max-width: 620px) {
     .photos.cols { flex-direction: column; align-items: stretch; }
     .photos.cols > .col { display: contents; }
@@ -152,6 +152,10 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .photos:has(> img:only-child) { columns: 1; }
 .photos img { display: block; width: 100%; height: auto; margin-bottom: clamp(14px, 2vw, 28px);
               break-inside: avoid; background: var(--rule); }
+/* A captioned photo: the line sits under it, in the artist's own case. */
+.photos figure { margin: 0 0 clamp(14px, 2vw, 28px); break-inside: avoid; }
+.photos figure img { margin-bottom: 0; }
+.photos figcaption { margin-top: 10px; font-size: 12px; letter-spacing: 0.04em; line-height: 1.5; color: var(--dim); }
 
 /* Click-to-load players. Nothing from Spotify, SoundCloud or YouTube is
    fetched until someone asks for it. */
