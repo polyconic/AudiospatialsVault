@@ -86,7 +86,7 @@ const exit = here => `<nav class="exit">
     <a href="/">Vault</a>
     ${here === 'tracklist' ? '<span class="here">Tracklist</span>' : '<a href="/tracklist">Tracklist</a>'}<a href="https://audiospatials.com/">Audiospatials</a>
     <span class="spacer"></span>
-    <span class="copy">&copy; 2026 Audiospatials</span>
+    <span class="copy">&copy; <span data-yr>2026</span> Audiospatials</span>
 </nav>`;
 
 const scripts = clean => `<script>
@@ -120,6 +120,7 @@ ${p.note ? `    <div class="prose"><p>${esc(p.note)}</p></div>\n` : ''}
 
 ${exit()}
 ${scripts('/' + p.slug)}
+<script>document.querySelectorAll("[data-yr]").forEach(function(e){e.textContent=new Date().getFullYear()})</script>
 </body>
 </html>
 `);

@@ -32,7 +32,7 @@
 <div class="mid">
     <p class="label">There is no page at this address.<br>Neither is the track.</p>
     <p class="label"><a href="/">Vault</a><a href="/tracklist">Tracklist</a><a href="https://audiospatials.com/">Audiospatials</a></p>
-    <p class="copy label">&copy; 2026 Audiospatials</p>
+    <p class="copy label">&copy; <span data-yr>2026</span> Audiospatials</p>
 </div>
 
 <script src="/js/geo.js"></script>
@@ -43,5 +43,6 @@ Geo.converge(document.getElementById('c'), '404', width => {
 }, { cycle: 16 });
 </script>
 <script src="/js/nav.js"></script>
+<script>document.querySelectorAll("[data-yr]").forEach(function(e){e.textContent=new Date().getFullYear()})</script>
 </body>
 </html>
