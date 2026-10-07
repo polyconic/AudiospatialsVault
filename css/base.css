@@ -13,20 +13,28 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Pages fade through each other: the old one leaves first, then the new one
-   arrives, so two layouts never sit on top of each other mid-fade. Browsers
-   without cross-document view transitions just navigate as before. */
+/* Pages fade through each other: the old one leaves quickly, and the new one
+   rises a few pixels into place as it fades in, starting just as the old one
+   is nearly gone, so two layouts never sit on top of each other. The bar and
+   the corner marks are the same on every page, so they hold still while the
+   page changes under them (only the bar's current section crossfades).
+   Browsers without cross-document view transitions just navigate as before. */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
+  ::view-transition-group(*) { animation-duration: 0.45s; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
   ::view-transition-old(root) {
-    animation: vs-out 0.2s cubic-bezier(0.4, 0, 1, 1) both;
+    animation: vs-out 0.22s cubic-bezier(0.4, 0, 1, 1) both;
   }
   ::view-transition-new(root) {
-    animation: vs-in 0.34s cubic-bezier(0, 0, 0.2, 1) 0.12s both;
+    animation: vs-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
   }
+  .exit { view-transition-name: vs-bar; }
+  .backmark { view-transition-name: vs-back; }
+  .homemark { view-transition-name: vs-home; }
+  .corner { view-transition-name: vs-corner; }
 }
 @keyframes vs-out { to { opacity: 0; } }
-@keyframes vs-in { from { opacity: 0; } }
+@keyframes vs-in { from { opacity: 0; transform: translateY(10px); } }
 
 html { -webkit-text-size-adjust: 100%; }
 
