@@ -69,8 +69,10 @@ a.row:focus-visible .u { color: var(--sig); }
 @media (hover: hover) { .tile:hover .t { color: var(--sig); } }
 
 /* The Artists grid centres an unfinished last row: a wrapping row of fixed
-   thirds (halves, wholes) instead of grid tracks, same sizes and gaps. */
-.tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 3;
+   fifths (halves, wholes) instead of grid tracks, same sizes and gaps. Ten
+   artists make two full rows of five, two to a row below 1000px; add or drop
+   one and the last row sits centered. */
+.tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 5;
                   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
 .tiles.centered > .tile { width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); }
 @media (max-width: 1000px) { .tiles.centered { --cols: 2; } }
