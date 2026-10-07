@@ -68,6 +68,11 @@ a.row:focus-visible .u { color: var(--sig); }
 .tile:focus-visible .t { color: var(--sig); }
 @media (hover: hover) { .tile:hover .t { color: var(--sig); } }
 
+/* The Artists page runs wider than the others (less side padding, a taller
+   wrap) so five tiles across are not small. */
+body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px, 3.5vw, 56px); }
+.roster .wrap { max-width: 1760px; }
+
 /* The Artists grid centres an unfinished last row: a wrapping row of fixed
    fifths (halves, wholes) instead of grid tracks, same sizes and gaps. Ten
    artists make two full rows of five, two to a row below 1000px; add or drop
