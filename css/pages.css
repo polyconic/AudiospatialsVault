@@ -81,10 +81,12 @@ body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px,
 .tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 5;
                   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
 .tiles.centered > .tile { width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); }
-@media (max-width: 1000px) { .tiles.centered { --cols: 2; } }
+/* Music: three across, so five releases sit as three and two, the two centered. */
+.tiles.centered.third { --cols: 3; }
+@media (max-width: 1000px) { .tiles.centered, .tiles.centered.third { --cols: 2; } }
 /* One to a row on a phone: more room under each name, so it reads as the
    caption of the photo above, not the one below. */
-@media (max-width: 480px)  { .tiles.centered { --cols: 1; row-gap: 40px; } }
+@media (max-width: 480px)  { .tiles.centered, .tiles.centered.third { --cols: 1; row-gap: 40px; } }
 
 /* Artist pages: the photo beside the words, stacked on a phone. */
 .artist-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
