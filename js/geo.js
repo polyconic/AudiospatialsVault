@@ -249,8 +249,7 @@
             });
         }
 
-        // opts.still: draw the word once, assembled (the vault's front).
-        if (MOVING && !opts.still) (function loop(ms) { render(ms / 1000); requestAnimationFrame(loop); })(0);
+        if (MOVING) (function loop(ms) { render(ms / 1000); requestAnimationFrame(loop); })(0);
         else { render(0); addEventListener('resize', () => render(0)); }
 
         return {
@@ -271,6 +270,7 @@
         const NS = 'http://www.w3.org/2000/svg';
         const shown = document.createElement('span');
         shown.setAttribute('aria-hidden', 'true');
+        shown.setAttribute('data-nosnippet', '');
         const letters = [];
         (function walk(node, into) {
             [...node.childNodes].forEach(c => {
@@ -281,9 +281,6 @@
                     return;
                 }
                 if (c.nodeType !== 3) return;
-                // Letters sit in a word that can't break, so a long title wraps
-                // at its spaces rather than between any two letters.
-                let word = null;
                 [...c.textContent.replace(/\s+/g, ' ')].forEach(ch => {
                     const span = document.createElement('span');
                     span.className = 'arrive';
@@ -296,11 +293,7 @@
                         svg.appendChild(path);
                         span.appendChild(svg);
                     } else span.textContent = ch;
-                    if (ch === ' ') { word = null; into.appendChild(span); }
-                    else {
-                        if (!word) { word = document.createElement('span'); word.style.whiteSpace = 'nowrap'; into.appendChild(word); }
-                        word.appendChild(span);
-                    }
+                    into.appendChild(span);
                     letters.push(span);
                 });
             });
