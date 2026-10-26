@@ -1,5 +1,4 @@
-/* Everything the inside pages share: heading, lede, ruled lists, the grid and
-   the click-to-load players. base.css stays the site-wide layer. */
+/* styles for the inside pages. base.css has the sitewide stuff */
 
 body { padding: clamp(30px, 8vh, 90px) clamp(20px, 7vw, 110px) 110px; }
 @media (max-width: 620px) { body { padding-top: 62px; padding-bottom: 150px; } }
@@ -8,7 +7,7 @@ body { padding: clamp(30px, 8vh, 90px) clamp(20px, 7vw, 110px) 110px; }
 h1 { font-size: clamp(40px, 11vw, 150px); line-height: 0.82; letter-spacing: -0.045em;
      font-weight: 700; text-transform: uppercase; overflow-wrap: anywhere; }
 h1 em { font-style: normal; color: var(--sig); margin-left: calc(0.045em + 2px); }
-/* Names run long (WOLFMANWOOF); artist pages set theirs a size down. */
+/* artist names are long (wolfmanwoof) so they go a size down */
 h1.name { font-size: clamp(34px, 8.6vw, 120px); }
 
 .lede { font-size: clamp(19px, 2.4vw, 30px); line-height: 1.45; letter-spacing: -0.01em; text-wrap: pretty;
@@ -17,7 +16,7 @@ h1.name { font-size: clamp(34px, 8.6vw, 120px); }
 
 .prose { max-width: 62ch; margin-top: clamp(30px, 6vh, 60px); }
 .prose p { font-size: 16px; line-height: 1.7; letter-spacing: 0.005em;
-           /* No single word left alone on a paragraph's last line. */
+           /* no lonely last word */
            text-wrap: pretty; }
 .prose p + p { margin-top: 1.1em; }
 .prose a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--faint);
@@ -27,7 +26,7 @@ h1.name { font-size: clamp(34px, 8.6vw, 120px); }
 section { margin-top: clamp(50px, 10vh, 110px); }
 section > .label:first-child { display: block; margin-bottom: 16px; }
 
-/* Ruled rows: name left, detail right. Links get the Visuospatials arrow. */
+/* lined rows, name on the left, detail on the right. links get the little arrow */
 .rows { list-style: none; max-width: 760px; }
 .rows li { border-top: 1px solid var(--rule); }
 .rows li:last-child { border-bottom: 1px solid var(--rule); }
@@ -49,7 +48,7 @@ a.row:focus-visible .u { color: var(--sig); }
     .rows .u { text-align: left; }
 }
 
-/* A grid of square tiles: artists, releases. */
+/* square tile grid for artists and releases */
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 2vw, 28px);
          margin-top: clamp(24px, 5vh, 54px); }
 @media (max-width: 1000px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
@@ -68,55 +67,56 @@ a.row:focus-visible .u { color: var(--sig); }
 .tile:focus-visible .t { color: var(--sig); }
 @media (hover: hover) { .tile:hover .t { color: var(--sig); } }
 
-/* The Artists page runs wider than the others (less side padding, a taller
-   wrap) so five tiles across are not small. */
+/* artists page is wider so five across isn't tiny */
 body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px, 3.5vw, 56px); }
 .roster .wrap { max-width: 1760px; }
-@media (min-width: 761px) { body.roster { padding-bottom: 28px; } .roster .footcopy { margin-top: 60px; } }
+/* the page fills the screen: the grid sits centered in the room under the title, the © line at the bottom */
+@media (min-width: 761px) {
+    body.roster { padding-bottom: 28px; min-height: 100svh; display: flex; flex-direction: column; }
+    .roster .wrap { flex: 1; width: 100%; display: flex; flex-direction: column; }
+    .roster .tiles.centered { margin-block: auto; }
+    .roster .footcopy { margin-top: 60px; }
+}
 
-/* The Artists grid centres an unfinished last row: a wrapping row of fixed
-   fifths (halves, wholes) instead of grid tracks, same sizes and gaps. Ten
-   artists make two full rows of five, two to a row below 1000px; add or drop
-   one and the last row sits centered. */
+/* flex instead of grid so a short last row stays centered. five across, two under 1000px */
 .tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 5;
                   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
 .tiles.centered > .tile { width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); }
-/* Music: three across, so five releases sit as three and two, the two centered. */
+/* music page is three across. artists is six, so eleven sit as six over five,
+   and four between 1000 and 1200px where six would get too small */
 .tiles.centered.third { --cols: 3; }
-@media (max-width: 1000px) { .tiles.centered, .tiles.centered.third { --cols: 2; } }
-/* One to a row on a phone: more room under each name, so it reads as the
-   caption of the photo above, not the one below. */
-@media (max-width: 480px)  { .tiles.centered, .tiles.centered.third { --cols: 1; row-gap: 40px; } }
+.roster .tiles.centered { --cols: 6; }
+@media (max-width: 1200px) { .roster .tiles.centered { --cols: 4; } }
+@media (max-width: 1000px) { .tiles.centered, .tiles.centered.third, .roster .tiles.centered { --cols: 2; } }
+/* one per row on phones, extra gap so the name goes with the photo above it */
+@media (max-width: 480px)  { .tiles.centered, .tiles.centered.third, .roster .tiles.centered { --cols: 1; row-gap: 40px; } }
 
-/* Artist pages: the photo beside the words, stacked on a phone. */
+/* artist page top: photo next to the bio, stacked on phones */
 .artist-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
               gap: clamp(24px, 5vw, 80px); align-items: start; margin-top: clamp(26px, 5vh, 54px); }
 .artist-photo img, .artist-photo video { display: block; width: 100%; height: auto; background: var(--rule); }
-/* A short bio sits level with the middle of the photo rather than floating
-   at its top; a bio taller than the photo fills the row as before. */
+/* short bios sit in the middle of the photo instead of up top */
 .artist-text { align-self: center; }
 .artist-text { container-type: inline-size; }
-/* A tagline stays on one line: it shrinks with its column instead of wrapping. */
+/* tagline stays on one line, shrinks instead of wrapping */
 .artist-text .lede { margin-top: 0; max-width: none; white-space: nowrap; font-size: min(clamp(19px, 2.4vw, 30px), 5.6cqw); }
 .artist-text .prose { margin-top: 0; }
 .artist-text .lede + .prose { margin-top: clamp(22px, 4vh, 40px); }
-/* wide: a clip as the main asset runs the full width, the words under it. */
+/* wide: full width video up top, words underneath */
 .artist-top.wide { grid-template-columns: 1fr; }
 .artist-top.wide .artist-text { max-width: 760px; }
 
-/* flip: the photo on the right. On a phone it still comes first. */
+/* flip: photo on the right. still first on phones */
 .artist-top.flip { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
 .artist-top.flip .artist-photo { order: 2; }
 @media (max-width: 760px) { .artist-top, .artist-top.flip { grid-template-columns: 1fr; }
                             .artist-top.flip .artist-photo { order: 0; } }
 
-/* Photos further down a page keep their own shape. */
+/* photos further down, uncropped */
 .photos { columns: 2; column-gap: clamp(14px, 2vw, 28px); margin-top: clamp(24px, 5vh, 54px); }
 @media (max-width: 620px) { .photos { columns: 1; } }
-/* Galleries are two columns, each centered against the other, so a short
-   column sits level with the middle of a tall one rather than hanging from its
-   top. The build deals the photos out to the shorter column in turn; a phone
-   shows them one at a time, in the order written (--i). */
+/* two photo columns centered against each other. the build splits the photos
+   between them, phones go back to the original order (--i) */
 .photos.cols { --g: clamp(14px, 2vw, 28px); columns: auto; display: flex; align-items: center; gap: var(--g); }
 .photos.cols > .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--g); }
 .photos.cols img, .photos.cols .clip, .photos.cols figure { margin-bottom: 0; }
@@ -125,8 +125,7 @@ body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px,
     .photos.cols > .col { display: contents; }
     .photos.cols .col > * { order: var(--i); }
 }
-/* Looping clips, among the photos or as an artist's main asset, with a
-   sound button in the corner. */
+/* looping videos with a sound button in the corner */
 .clip { position: relative; }
 .clip video { display: block; width: 100%; height: auto; background: var(--rule); }
 .photos .clip { margin-bottom: clamp(14px, 2vw, 28px); break-inside: avoid; }
@@ -136,32 +135,31 @@ body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px,
                color: var(--fg); display: grid; place-items: center;
                transition: color 0.2s, border-color 0.2s, background 0.2s; }
 .clip .sound svg { width: 14px; height: 14px; fill: currentColor; }
-/* Small to look at, but still an easy tap. */
+/* bigger tap area than it looks */
 .clip .sound::before { content: ''; position: absolute; inset: -8px; }
 .clip .sound:focus-visible { color: var(--sig); border-color: var(--sig); }
 @media (hover: hover) { .clip .sound:hover { color: var(--sig); border-color: var(--sig); } }
 .clip .sound[aria-pressed="true"] { background: rgba(10, 10, 10, 0.75); }
 
-/* Video players below the bio sit centred on the page. */
+/* video players under the bio, centered */
 .more { text-align: center; }
 .more .players { margin: 0 auto; text-align: left; }
 .more .note { margin-left: auto; margin-right: auto; }
 
-/* Four releases make a square: two by two. */
+/* four releases, two by two */
 .tiles.cube { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin-left: auto; margin-right: auto; }
 section:has(> .tiles.cube) > .label { text-align: center; }
 
-/* A single photo takes the whole width rather than half of it. */
+/* one photo goes full width */
 .photos:has(> img:only-child) { columns: 1; }
 .photos img { display: block; width: 100%; height: auto; margin-bottom: clamp(14px, 2vw, 28px);
               break-inside: avoid; background: var(--rule); }
-/* A captioned photo: the line sits under it, in the artist's own case. */
+/* photo captions, kept how the artist wrote them */
 .photos figure { margin: 0 0 clamp(14px, 2vw, 28px); break-inside: avoid; }
 .photos figure img { margin-bottom: 0; }
 .photos figcaption { margin-top: 10px; font-size: 12px; letter-spacing: 0.04em; line-height: 1.5; color: var(--dim); }
 
-/* Click-to-load players. Nothing from Spotify, SoundCloud or YouTube is
-   fetched until someone asks for it. */
+/* click to load players. nothing from spotify, soundcloud or youtube loads until you click */
 .players { display: grid; gap: clamp(14px, 2vw, 22px); max-width: 760px; }
 .player { position: relative; width: 100%; border: 1px solid var(--rule); background: #111110;
           color: var(--fg); font: inherit; cursor: pointer; text-align: left; padding: 0;
@@ -187,14 +185,12 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .player.loaded { cursor: default; border-color: transparent; background: none; }
 .note { max-width: 62ch; margin-top: 18px; line-height: 1.9; }
 
-/* Rows whose right side is a sentence, not a label. */
+/* rows where the right side is a sentence */
 .rows.plain .u { text-transform: none; letter-spacing: 0; font-size: 14px; line-height: 1.5;
                  max-width: 44ch; }
 
-/* The exit bar at the top, between the corner marks, sections centred; the
-   copyright closes the page, centred (.footcopy, made by js/menu.js).
-   base.css keeps the Visuospatials layout (bar at the bottom); this overrides
-   it here only. */
+/* nav bar goes at the top here, copyright at the bottom of the page (.footcopy, from js/menu.js).
+   base.css is shared with visuospatials which has the bar at the bottom */
 .exit { top: 0; bottom: auto; justify-content: center; text-align: center;
         padding: calc(18px + env(safe-area-inset-top, 0px)) 20px 18px;
         border-top: 0; border-bottom: 1px solid var(--rule); }
@@ -202,14 +198,13 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .exit .spacer, .exit .copy { display: none; }
 @media (min-width: 761px) {
     body { padding-top: clamp(80px, 9vh, 100px); padding-bottom: 50px; }
-    /* Level with the links in the bar. */
+    /* line up with the bar links */
     .backmark, .homemark, .corner { top: 11px; }
 }
 .footcopy { display: block; max-width: 1180px; margin: clamp(70px, 13vh, 120px) auto 0;
             font-size: 10px; text-align: center; }
 
-/* Phones: no bottom bar. The same links drop down from the two-bar button in
-   the top right (js/menu.js), under the corner marks. */
+/* phones: no bar, the links drop down from the menu button top right (js/menu.js) */
 .menumark { display: none !important; }
 @media (max-width: 760px) {
     .menumark { display: grid !important; }
@@ -237,16 +232,20 @@ section:has(> .tiles.cube) > .label { text-align: center; }
     html.menu-open .exit .copy { display: none; }
 }
 @keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+/* phones with javascript off get no menu button, so the bar sits at the end of the page instead */
+@media (max-width: 760px) and (scripting: none) {
+    .exit { display: flex; position: static; gap: 14px 22px;
+            padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+            border-bottom: 0; border-top: 1px solid var(--rule); }
+}
 
-/* SoundCloud under an artist's bio. */
+/* soundcloud under the bio */
 .listen-here, .elsewhere { margin-top: clamp(30px, 5vh, 50px); }
 .listen-here .label:first-child, .elsewhere .label:first-child { display: block; margin-bottom: 14px; }
 .listen-here .tracks { margin-bottom: 0; }
 
-/* SoundCloud tracks: our own rows. No rules between them, room instead
-   (2026-09-29: the hairlines read clinical); a soft round button that turns
-   solid white while playing; a short rounded line under the title that
-   fills red and seeks. */
+/* our own soundcloud track rows. no lines between them (looked too clinical),
+   round play button goes white when playing, red progress bar you can click to seek */
 .tracks { max-width: 760px; margin-bottom: clamp(14px, 2vw, 22px); }
 .track { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto;
          align-items: center; column-gap: 18px; row-gap: 9px; }
@@ -257,7 +256,7 @@ section:has(> .tiles.cube) > .label { text-align: center; }
               transition: background 0.2s, color 0.2s; }
 .track-play i { width: 11px; height: 13px; margin-left: 3px; background: currentColor;
                 clip-path: polygon(0 0, 100% 50%, 0 100%); }
-/* Pause: two bars, the second a shadow of the first. */
+/* pause icon, second bar is a box-shadow */
 .track[data-state="playing"] .track-play i { width: 4px; height: 12px; margin-left: 0; clip-path: none;
                                              box-shadow: 6px 0 0 currentColor; transform: translateX(-3px); }
 .track[data-state="loading"] .track-play i { opacity: 0.4; }
@@ -268,7 +267,7 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .track-title { font-size: 16px; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .track[data-state="playing"] .track-title { color: var(--sig); }
 .track-time { grid-column: 3; align-self: end; white-space: nowrap; font-variant-numeric: tabular-nums; }
-/* The way out to SoundCloud, always there under the title, with the site's small arrow. */
+/* link out to soundcloud under the title */
 .track-sub a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
 .track-sub a::after { content: ""; display: inline-block; width: 0.5em; height: 0.5em; margin-left: 0.6em;
                       vertical-align: 0.22em; background: currentColor; clip-path: polygon(0 0, 100% 0, 100% 100%); }
@@ -279,8 +278,7 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .track-bar::before { background: rgba(242, 242, 239, 0.1); }
 .track-bar span { background: var(--sig); transform: scaleX(0); transform-origin: left; transition: transform 0.25s linear; }
 .track[data-state="idle"] .track-bar { cursor: default; }
-/* The service's own player: out of sight while it plays for us, shown only
-   if the browser won't start it hidden. */
+/* the real embed, hidden while it plays. only shows if the browser won't play it hidden */
 .track-frame { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .track-frame iframe { display: block; width: 100%; border: 0; }
 .track.native .track-frame { position: static; grid-column: 1 / -1; width: 100%; height: auto;
@@ -289,20 +287,18 @@ section:has(> .tiles.cube) > .label { text-align: center; }
 .track.native[data-kind="spotify"] .track-frame iframe { height: 152px; border-radius: 12px; }
 .track.native .track-bar { display: none; }
 
-/* Page titles breathe out as you scroll: letter-spacing opens from tight to
-   a little looser over the first quarter of a screen, and closes again on
-   the way back up. Tied to the scroll, not a timer. Browsers without
-   scroll-linked animation (and anyone who asks for less motion) keep it still. */
+/* titles spread out a little as you scroll down and tighten back up on the way up.
+   off for reduced motion and browsers that can't do it */
 @supports (animation-timeline: scroll()) {
     @media (prefers-reduced-motion: no-preference) {
         .wrap > h1 {
             animation: title-open linear both;
             animation-timeline: scroll(root block);
-            /* Done by the time the title has scrolled off, so all of it is seen. */
+            /* finishes before the title scrolls away */
             animation-range: 0 25vh;
         }
     }
 }
 @keyframes title-open { to { letter-spacing: 0.03em; } }
-/* A title that already wraps (Contact's, on narrower screens) stays still, or it re-wraps mid-scroll. */
+/* titles that already wrap (contact) stay still or they jump around */
 .wrap > h1.still { animation: none; }
