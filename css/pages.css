@@ -1,5 +1,12 @@
 /* styles for the inside pages. base.css has the sitewide stuff */
 
+/* the wide font, for artist names (the artists list and the top of each artist page).
+   archivo at its widest and heaviest, from google fonts, kept here so nothing loads from elsewhere */
+@font-face { font-family: "Archivo Expanded"; src: url("/assets/fonts/archivo-expanded-800.woff2") format("woff2");
+             font-weight: 800; font-stretch: 125%; font-display: swap; }
+.names a, .cover h1 { font-family: "Archivo Expanded", var(--sans); font-weight: 800; font-stretch: 125%;
+                      font-variation-settings: "wdth" 125; letter-spacing: 0; text-transform: uppercase; }
+
 body { padding: clamp(30px, 8vh, 90px) clamp(20px, 7vw, 110px) 110px; }
 @media (max-width: 620px) { body { padding-top: 62px; padding-bottom: 150px; } }
 .wrap { max-width: 1180px; margin: 0 auto; }
@@ -67,50 +74,67 @@ a.row:focus-visible .u { color: var(--sig); }
 .tile:focus-visible .t { color: var(--sig); }
 @media (hover: hover) { .tile:hover .t { color: var(--sig); } }
 
-/* artists page is wider so five across isn't tiny */
+/* artists page: the names one per line, big and wide. hovering one fills its letters
+   with the artist's photo (the 1200px copy in img/artists/sm/, so all eleven load light) */
 body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px, 3.5vw, 56px); }
 .roster .wrap { max-width: 1760px; }
-/* the page fills the screen: the grid sits centered in the room under the title, the © line at the bottom */
-@media (min-width: 761px) {
-    body.roster { padding-bottom: 28px; min-height: 100svh; display: flex; flex-direction: column; }
-    .roster .wrap { flex: 1; width: 100%; display: flex; flex-direction: column; }
-    .roster .tiles.centered { margin-block: auto; }
-    .roster .footcopy { margin-top: 60px; }
-}
+@media (min-width: 761px) { body.roster { padding-bottom: 28px; } .roster .footcopy { margin-top: 60px; } }
+.names { list-style: none; margin: 0; padding: 0; }
+.names a { display: inline-block; color: var(--fg); text-decoration: none; transition: color 0.15s;
+           font-size: clamp(26px, 5.4vw, 84px); line-height: 1.12; }
+.names span { background: linear-gradient(rgba(255,255,255,.16), rgba(255,255,255,.16)), var(--photo) center 30% / cover no-repeat;
+              -webkit-background-clip: text; background-clip: text; }
+.names a:focus-visible { color: transparent; outline: none; }
+@media (hover: hover) { .names a:hover { color: transparent; } }
+@media (max-width: 760px) { .names a { font-size: clamp(22px, 7.2vw, 44px); } }
 
 /* flex instead of grid so a short last row stays centered. five across, two under 1000px */
 .tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 5;
                   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
 .tiles.centered > .tile { width: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); }
-/* music page is three across. artists is six, so eleven sit as six over five,
-   and four between 1000 and 1200px where six would get too small */
+/* music page is three across */
 .tiles.centered.third { --cols: 3; }
-.roster .tiles.centered { --cols: 6; }
-@media (max-width: 1200px) { .roster .tiles.centered { --cols: 4; } }
-@media (max-width: 1000px) { .tiles.centered, .tiles.centered.third, .roster .tiles.centered { --cols: 2; } }
+@media (max-width: 1000px) { .tiles.centered, .tiles.centered.third { --cols: 2; } }
 /* one per row on phones, extra gap so the name goes with the photo above it */
-@media (max-width: 480px)  { .tiles.centered, .tiles.centered.third, .roster .tiles.centered { --cols: 1; row-gap: 40px; } }
+@media (max-width: 480px)  { .tiles.centered, .tiles.centered.third { --cols: 1; row-gap: 40px; } }
 
-/* artist page top: photo next to the bio, stacked on phones */
-.artist-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-              gap: clamp(24px, 5vw, 80px); align-items: start; margin-top: clamp(26px, 5vh, 54px); }
-.artist-photo img, .artist-photo video { display: block; width: 100%; height: auto; background: var(--rule); }
-/* short bios sit in the middle of the photo instead of up top */
-.artist-text { align-self: center; }
+/* artist page cover, the whole first screen (after rebellionrecords.com): the page photo big on the
+   left, a second photo top right, the name bottom right. curved corners where they meet the black.
+   flip mirrors it. on phones: photo, name, second photo */
+body.artist { padding-top: 0; overflow-x: clip; }
+.cover { --navh: 49px; display: grid; grid-template-columns: 60% 40%; grid-template-rows: 60% 40%;
+         height: calc(100svh - var(--navh)); margin: var(--navh) calc(50% - 50vw) clamp(60px, 10vh, 110px); }
+.cover .c1, .cover .c2 { overflow: hidden; background: var(--rule); }
+.cover img, .cover .clip, .cover .clip video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cover .c1 { grid-column: 1; grid-row: 1 / 3; border-bottom-right-radius: min(16vw, 240px); }
+.cover .c2 { grid-column: 2; grid-row: 1; border-bottom-left-radius: min(9vw, 140px); }
+.cover h1 { grid-column: 2; grid-row: 2; align-self: end; justify-self: end; text-align: right; margin: 0;
+            padding: 0 clamp(20px, 3vw, 48px) clamp(24px, 5vh, 56px) 20px;
+            font-size: clamp(24px, 3.1vw, 64px); line-height: 0.95; overflow-wrap: normal; white-space: nowrap; }
+.cover.solo .c1 { border-bottom-right-radius: 0; border-top-right-radius: min(16vw, 240px); }
+.cover.solo h1 { grid-row: 1 / 3; }
+.cover.flip { grid-template-columns: 40% 60%; }
+.cover.flip .c1 { grid-column: 2; border-bottom-right-radius: 0; border-bottom-left-radius: min(16vw, 240px); }
+.cover.flip .c2 { grid-column: 1; border-bottom-left-radius: 0; border-bottom-right-radius: min(9vw, 140px); }
+.cover.flip h1 { grid-column: 1; justify-self: start; text-align: left; padding: 0 20px clamp(24px, 5vh, 56px) clamp(20px, 3vw, 48px); }
+.cover.flip.solo .c1 { border-bottom-left-radius: 0; border-top-left-radius: min(16vw, 240px); }
+/* the sound button moves off the rounded corner */
+.cover .clip .sound { right: auto; left: 16px; bottom: 16px; }
+@media (max-width: 760px) {
+    .cover, .cover.flip { --navh: 0px; height: auto; grid-template-columns: 1fr; grid-template-rows: none; }
+    .cover .c1, .cover.flip .c1, .cover.solo .c1 { grid-column: 1; grid-row: auto; height: 78svh; border-radius: 0 0 38vw 0; }
+    .cover h1, .cover.flip h1, .cover.solo h1 { grid-column: 1; grid-row: auto; justify-self: start; text-align: left;
+        padding: 26px clamp(20px, 7vw, 110px) 30px; font-size: clamp(22px, 7.2vw, 44px); }
+    .cover .c2, .cover.flip .c2 { grid-column: 1; grid-row: auto; order: 2; height: 110vw; border-radius: 0 30vw 0 0; }
+}
+
+/* under the cover: the bio and the rest in one centered column */
+.artist-top { max-width: 760px; margin: 0 auto; }
 .artist-text { container-type: inline-size; }
 /* tagline stays on one line, shrinks instead of wrapping */
 .artist-text .lede { margin-top: 0; max-width: none; white-space: nowrap; font-size: min(clamp(19px, 2.4vw, 30px), 5.6cqw); }
 .artist-text .prose { margin-top: 0; }
 .artist-text .lede + .prose { margin-top: clamp(22px, 4vh, 40px); }
-/* wide: full width video up top, words underneath */
-.artist-top.wide { grid-template-columns: 1fr; }
-.artist-top.wide .artist-text { max-width: 760px; }
-
-/* flip: photo on the right. still first on phones */
-.artist-top.flip { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
-.artist-top.flip .artist-photo { order: 2; }
-@media (max-width: 760px) { .artist-top, .artist-top.flip { grid-template-columns: 1fr; }
-                            .artist-top.flip .artist-photo { order: 0; } }
 
 /* photos further down, uncropped */
 .photos { columns: 2; column-gap: clamp(14px, 2vw, 28px); margin-top: clamp(24px, 5vh, 54px); }
