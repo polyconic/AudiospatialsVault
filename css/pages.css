@@ -1,11 +1,13 @@
 /* styles for the inside pages. base.css has the sitewide stuff */
 
-/* the wide font, for artist names (the artists list and the top of each artist page).
-   archivo at its widest and heaviest, from google fonts, kept here so nothing loads from elsewhere */
-@font-face { font-family: "Archivo Expanded"; src: url("/assets/fonts/archivo-expanded-800.woff2") format("woff2");
-             font-weight: 800; font-stretch: 125%; font-display: swap; }
-.names a, .cover h1 { font-family: "Archivo Expanded", var(--sans); font-weight: 800; font-stretch: 125%;
-                      font-variation-settings: "wdth" 125; letter-spacing: 0; text-transform: uppercase; }
+/* no grey text: what base.css draws in --dim (labels, the nav, the © line) is white here (2026-10-28).
+   the nav goes red on hover instead, since it can't go from grey to white any more */
+:root { --dim: var(--fg); }
+@media (hover: hover) { .exit a:hover { color: var(--sig); } }
+
+/* artist names (the artists list and the top of each artist page): helvetica bold caps like the page
+   titles. they were archivo expanded until 2026-10-29, when Gregor went back to helvetica sitewide */
+.names a, .cover h1 { font-weight: 700; letter-spacing: -0.03em; text-transform: uppercase; }
 
 body { padding: clamp(30px, 8vh, 90px) clamp(20px, 7vw, 110px) 110px; }
 @media (max-width: 620px) { body { padding-top: 62px; padding-bottom: 150px; } }
@@ -86,7 +88,49 @@ body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px,
               -webkit-background-clip: text; background-clip: text; }
 .names a:focus-visible { color: transparent; outline: none; }
 @media (hover: hover) { .names a:hover { color: transparent; } }
-@media (max-width: 760px) { .names a { font-size: clamp(22px, 7.2vw, 44px); } }
+/* front page, wide screens: the artists' photos on the right, dissolving one into the next every
+   5s (js/reel.js), curved corner like the artist covers. hovering a name shows theirs */
+.reel { display: none; }
+@media (min-width: 1000px) {
+    .home .wrap { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: clamp(32px, 4vw, 72px); }
+    .reel { display: block; position: sticky; top: clamp(80px, 9vh, 100px); align-self: start;
+            justify-self: end; width: 100%; max-width: 760px;
+            margin-right: calc(-0.5 * clamp(20px, 3.5vw, 56px)); /* half into the side margin, Gregor */
+            height: calc(100svh - clamp(80px, 9vh, 100px) - 28px); min-height: 360px;
+            overflow: hidden; background: var(--rule); border-top-left-radius: min(10vw, 180px); }
+    .reel a { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s ease; }
+    .reel a.on { opacity: 1; z-index: 1; }
+    .reel img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block;
+                transform: scale(1.06); transition: transform 7s linear; }
+    .reel a.on img { transform: scale(1); }
+    .reel img:not([src]) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .reel img, .reel a.on img { transform: none; transition: none; } }
+/* "out now" line top left of the front page, set from content/music.js. sits in the bar's
+   row on desktop, next to the icons on phones. red dot is the only color */
+.news { position: fixed; z-index: 61; top: calc(18px + env(safe-area-inset-top, 0px));
+        left: clamp(20px, 3.5vw, 56px); max-width: calc(50vw - 250px - clamp(20px, 3.5vw, 56px));
+        display: flex; align-items: center; gap: 10px; white-space: nowrap;
+        font-family: var(--sans); font-size: 10px; line-height: 12px; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--fg); text-decoration: none; transition: color 0.2s; }
+.news i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--sig); }
+.news span { overflow: hidden; text-overflow: ellipsis; }
+.news span::before { content: "\00a0"; }
+@media (hover: hover) { .news:hover { color: var(--sig); } }
+/* not enough room beside the centered bar links, so just under the bar instead */
+@media (min-width: 761px) and (max-width: 1000px) {
+    .news { position: absolute; top: calc(62px + env(safe-area-inset-top, 0px)); max-width: none; }
+}
+@media (max-width: 760px) {
+    .news { position: absolute; top: calc(13px + env(safe-area-inset-top, 0px)); height: 28px;
+            max-width: calc(100% - 2 * clamp(20px, 3.5vw, 56px) - 80px); }
+}
+/* phones: the names spread top to bottom to fill the screen */
+@media (max-width: 760px) {
+    .names { display: flex; flex-direction: column; justify-content: space-between;
+             min-height: calc(100svh - 62px - 28px); }
+    .names a { font-size: clamp(22px, 7.2vw, 44px); line-height: 1; }
+}
 
 /* flex instead of grid so a short last row stays centered. five across, two under 1000px */
 .tiles.centered { --gap: clamp(14px, 2vw, 28px); --cols: 5;
@@ -98,34 +142,29 @@ body.roster { padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px,
 /* one per row on phones, extra gap so the name goes with the photo above it */
 @media (max-width: 480px)  { .tiles.centered, .tiles.centered.third { --cols: 1; row-gap: 40px; } }
 
-/* artist page cover, the whole first screen (after rebellionrecords.com): the page photo big on the
-   left, a second photo top right, the name bottom right. curved corners where they meet the black.
-   flip mirrors it. on phones: photo, name, second photo */
+/* artist page cover, the whole first screen: the page photo big on the
+   left with a curved top corner, the name bottom right on the black. flip mirrors it. on phones the
+   photo then the name */
 body.artist { padding-top: 0; overflow-x: clip; }
-.cover { --navh: 49px; display: grid; grid-template-columns: 60% 40%; grid-template-rows: 60% 40%;
+section.cover { --navh: 49px; display: grid; grid-template-columns: 60% 40%;
          height: calc(100svh - var(--navh)); margin: var(--navh) calc(50% - 50vw) clamp(60px, 10vh, 110px); }
-.cover .c1, .cover .c2 { overflow: hidden; background: var(--rule); }
+.cover .c1 { overflow: hidden; background: var(--rule); border-top-right-radius: min(16vw, 240px); }
 .cover img, .cover .clip, .cover .clip video { display: block; width: 100%; height: 100%; object-fit: cover; }
-.cover .c1 { grid-column: 1; grid-row: 1 / 3; border-bottom-right-radius: min(16vw, 240px); }
-.cover .c2 { grid-column: 2; grid-row: 1; border-bottom-left-radius: min(9vw, 140px); }
-.cover h1 { grid-column: 2; grid-row: 2; align-self: end; justify-self: end; text-align: right; margin: 0;
+.cover h1 { align-self: end; justify-self: end; text-align: right; margin: 0;
             padding: 0 clamp(20px, 3vw, 48px) clamp(24px, 5vh, 56px) 20px;
-            font-size: clamp(24px, 3.1vw, 64px); line-height: 0.95; overflow-wrap: normal; white-space: nowrap; }
-.cover.solo .c1 { border-bottom-right-radius: 0; border-top-right-radius: min(16vw, 240px); }
-.cover.solo h1 { grid-row: 1 / 3; }
+            font-size: clamp(30px, 4vw, 82px); line-height: 0.95; overflow-wrap: normal; white-space: nowrap; }
 .cover.flip { grid-template-columns: 40% 60%; }
-.cover.flip .c1 { grid-column: 2; border-bottom-right-radius: 0; border-bottom-left-radius: min(16vw, 240px); }
-.cover.flip .c2 { grid-column: 1; border-bottom-left-radius: 0; border-bottom-right-radius: min(9vw, 140px); }
-.cover.flip h1 { grid-column: 1; justify-self: start; text-align: left; padding: 0 20px clamp(24px, 5vh, 56px) clamp(20px, 3vw, 48px); }
-.cover.flip.solo .c1 { border-bottom-left-radius: 0; border-top-left-radius: min(16vw, 240px); }
-/* the sound button moves off the rounded corner */
-.cover .clip .sound { right: auto; left: 16px; bottom: 16px; }
+/* a video cover (LUCI) is landscape, so it gets more of the width */
+.cover.wide { grid-template-columns: 70% 30%; }
+.cover.wide.flip { grid-template-columns: 30% 70%; }
+.cover.flip .c1 { grid-column: 2; grid-row: 1; border-top-right-radius: 0; border-top-left-radius: min(16vw, 240px); }
+.cover.flip h1 { grid-column: 1; grid-row: 1; justify-self: start; text-align: left;
+                 padding: 0 20px clamp(24px, 5vh, 56px) clamp(20px, 3vw, 48px); }
 @media (max-width: 760px) {
-    .cover, .cover.flip { --navh: 0px; height: auto; grid-template-columns: 1fr; grid-template-rows: none; }
-    .cover .c1, .cover.flip .c1, .cover.solo .c1 { grid-column: 1; grid-row: auto; height: 78svh; border-radius: 0 0 38vw 0; }
-    .cover h1, .cover.flip h1, .cover.solo h1 { grid-column: 1; grid-row: auto; justify-self: start; text-align: left;
-        padding: 26px clamp(20px, 7vw, 110px) 30px; font-size: clamp(22px, 7.2vw, 44px); }
-    .cover .c2, .cover.flip .c2 { grid-column: 1; grid-row: auto; order: 2; height: 110vw; border-radius: 0 30vw 0 0; }
+    section.cover, section.cover.flip, section.cover.wide { --navh: 0px; height: auto; grid-template-columns: 1fr; }
+    .cover .c1, .cover.flip .c1 { grid-column: 1; grid-row: auto; height: 78svh; border-radius: 0 0 38vw 0; }
+    .cover h1, .cover.flip h1 { grid-column: 1; grid-row: auto; justify-self: start; text-align: left;
+        padding: 26px clamp(20px, 7vw, 110px) 0; font-size: clamp(22px, 7.2vw, 44px); }
 }
 
 /* under the cover: the bio and the rest in one centered column */
