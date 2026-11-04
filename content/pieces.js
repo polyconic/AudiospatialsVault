@@ -163,15 +163,6 @@ const PIECES = [
         note: '',
     },
     {
-        slug: 'gentle',
-        title: 'GENTLE',
-        artist: 'Canary',
-        status: 'unreleased',
-        file: 'audio/gentle.m4a',
-        duration: 300.63,
-        note: '',
-    },
-    {
         slug: 'somos-igual',
         title: 'SOMOS IGUAL',
         artist: 'Canary',
